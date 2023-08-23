@@ -1,0 +1,595 @@
+/*
+<metadata 
+        description="Send XYZ from up to 3 touch points; map to your DAW on the fly without Dashboard!" 
+         details="Send XYZ from up to 3 touch points, easily mappable in your DAW using the Mode button as a shift-function to assign individual points' axes from a 3x3 grid. Roli Dashboard is only required to assign CC numbers to axes; you DON'T have to alt-tab back and forth between Dashboard and your DAW just to map/learn controls!" 
+         target="Lightpad" 
+         tags="MIDI;Controller;" 
+         canEmbedModes="false">
+    <modes>
+        <mode name="Default">
+        </mode>
+    </modes>
+
+    <groups>
+        <group name="MultiAxis" displayName="Multi Axis" />
+        <group name="XAssign" displayName="X Assign" />
+        <group name="YAssign" displayName="Y Assign" />
+        <group name="ZAssign" displayName="Z Assign" />
+        <group name="X2Assign" displayName="X2 Assign" />
+        <group name="Y2Assign" displayName="Y2 Assign" />
+        <group name="Z2Assign" displayName="Z2 Assign" />
+    </groups>
+
+    <variables>
+        <variable name="xCC" group="MultiAxis" displayName="X Axis CC" type="int" min="0" max="127" value="111" displayMode="stepper" tooltip="The MIDI CC that is sent for X position changes" />
+        <variable name="yCC" group="MultiAxis" displayName="Y Axis CC" type="int" min="0" max="127" value="112" displayMode="stepper" tooltip="The MIDI CC that is sent for Y position changes" />
+        <variable name="zCC" group="MultiAxis" displayName="Z Axis CC" type="int" min="0" max="127" value="113" displayMode="stepper" tooltip="The MIDI CC that is sent for Z (pressure) position changes" />
+
+        <variable name="x2CC" group="MultiAxis" displayName="X2 Axis CC" type="int" min="0" max="127" value="114" displayMode="stepper" tooltip="The MIDI CC that is sent for X2 position changes" />
+        <variable name="y2CC" group="MultiAxis" displayName="Y2 Axis CC" type="int" min="0" max="127" value="115" displayMode="stepper" tooltip="The MIDI CC that is sent for Y2 position changes" />
+        <variable name="z2CC" group="MultiAxis" displayName="Z2 Axis CC" type="int" min="0" max="127" value="116" displayMode="stepper" tooltip="The MIDI CC that is sent for Z2 (pressure) position changes" />
+
+        <variable name="x3CC" group="MultiAxis" displayName="X3 Axis CC" type="int" min="0" max="127" value="117" displayMode="stepper" tooltip="The MIDI CC that is sent for X3 position changes" />
+        <variable name="y3CC" group="MultiAxis" displayName="Y3 Axis CC" type="int" min="0" max="127" value="118" displayMode="stepper" tooltip="The MIDI CC that is sent for Y3 position changes" />
+        <variable name="z3CC" group="MultiAxis" displayName="Z3 Axis CC" type="int" min="0" max="127" value="119" displayMode="stepper" tooltip="The MIDI CC that is sent for Z3 (pressure) position changes" />
+
+        <variable name="channel" group="MultiAxis" displayName="MIDI Channel" type="int" min="1" max="16" value="1" displayMode="stepper" tooltip="The MIDI channel that values are sent on" />
+
+        <variable name="backgroundColour" group="MultiAxis" displayName="Background Color" type="colour" value="0x551963" tooltip="Color of the pad fill" />
+
+        <variable name="ccTextColour" group="MultiAxis" displayName="CC Text Colour" type="colour" value="0xFFFF00"  tooltip="Color of the text displaying the CC being assigned" />
+
+        <variable name="toggleSens" group="MultiAxis" displayName="Toggle Sensitivity" type="int" min="1" max="90" value="10" displayMode="stepper" tooltip="The velocity required to toggle assignment mode by striking the top-left corner of the Lightpad" />
+
+        /// Main XYZ point colour
+        <variable name="colour" group="MultiAxis" displayName="Touch Color" type="colour" value="0x4AC8CA"  tooltip="Color of the touch heat map" />        
+        
+        /// Secondary XYZ point colour
+        <variable name="colour2" group="MultiAxis" displayName="Secondary Color" type="colour" value="0xE5FFFB"  tooltip="Color of the secondary touch" />
+
+        /// Tertiary XYZ point colour
+        <variable name="colour3" group="MultiAxis" displayName="Tertiary Color" type="colour" value="0x1EEB3C"  tooltip="Color of the secondary touch" />
+
+        /// Assignment colours/bgcolours
+        <variable name="colourX" group="XAssign" displayName="X Touch Color" type="colour" value="0xEC4646"  tooltip="Color of the touch heat map when assigning X" />
+        <variable name="colourY" group="YAssign" displayName="Y Touch Color" type="colour" value="0x7FEF2B"  tooltip="Color of the touch heat map when assigning Y" />                
+        <variable name="colourZ" group="ZAssign" displayName="Z Touch Color" type="colour" value="0x2959F6"  tooltip="Color of the touch heat map when assigning Z" />
+        <variable name="backgroundColourX" group="XAssign" displayName="X Background Color" type="colour" value="0xE75431" tooltip="Color of the pad fill when assigning X" />
+        <variable name="backgroundColourY" group="YAssign" displayName="Y Background Color" type="colour" value="0x50CA55" tooltip="Color of the pad fill when assigning Y" />
+        <variable name="backgroundColourZ" group="ZAssign" displayName="Z Background Color" type="colour" value="0x5C62CC" tooltip="Color of the pad fill when assigning Z" />
+
+    </variables>
+</metadata>
+*/
+bool gammaCorrected;
+bool modeButtonDown;
+
+
+void initialise()
+{
+	for (int i = 0; i < 32; ++i)
+        setLocalConfigActiveState (i, false, false);
+
+    setLocalConfig (33, 1);
+    gammaCorrected = getLocalConfig (33) > 0;
+    modeButtonDown = false;
+}
+
+// Using the Lightpad's Mode button as a shift key: when down, we can assign X, Y and Z axes for Main, Secondary and Tertiary touch points
+// one by one. Touching a box on the assignment grid displays the CC number currently mapped to that point/axis, and sends continuous messages
+// with that CC number to be mapped/learned within a DAW.
+void handleButtonDown(int index)
+{
+    modeButtonDown = true;
+}
+
+void handleButtonUp(int index)
+{    
+    modeButtonDown = false;
+}
+
+void repaint()
+{    
+    clearDisplay(backgroundColour);
+    if(modeButtonDown)
+    {
+        // TOP ROW
+        fillRect( backgroundColourX, 0, 0, 5, 4);
+        fillRect( backgroundColourY, 5, 0, 10, 4);
+        fillRect( backgroundColourZ, 10, 0, 15, 4);
+
+        // SECOND ROW
+        fillRect( backgroundColourX, 0, 5, 5, 4);
+        fillRect( backgroundColourY, 5, 5, 10, 4);
+        fillRect( backgroundColourZ, 10, 5, 15, 4);
+
+        // THIRD ROW
+
+        fillRect( backgroundColourX, 0, 10, 5, 4);
+        fillRect( backgroundColourY, 5, 10, 10, 4);
+        fillRect( backgroundColourZ, 10, 10, 15, 4);
+    }
+
+    drawPressureMap();
+    fadePressureMap();    
+}
+
+int mapTouchToRange (float v, float inMin, float inMax, float outMax)
+{
+    return int (map (v, inMin / 100.0, inMax / 100.0, 0.0, outMax));
+}
+
+void outputCC (float v, int cc, float inMin, float inMax, bool invert)
+{
+    int value = mapTouchToRange (v, inMin, inMax, 127.0);
+    if (invert)
+        value = 127 - value;
+    
+    sendCC ((channel - 1), cc, value);
+}
+
+void handleTouch (int index, float x, float y, float z, float scale)
+{
+	if (index == 1)
+    {
+        addPressurePoint (colour, x, y, z * scale);            
+        outputCC (x, xCC, 7.0, 193.0, false);
+        outputCC (y, yCC, 7.0, 193.0, true);
+        outputCC (z, zCC, 0.0, 100.0, false);
+    }
+
+    if(index == 2)
+    {
+        addPressurePoint(colour2, x, y, z * scale);
+        outputCC (x, x2CC, 7.0, 193.0, false);
+        outputCC (y, y2CC, 7.0, 193.0, true);
+        outputCC (z, z2CC, 0.0, 100.0, false);
+    }
+
+    if(index == 3)
+    {
+        addPressurePoint(colour3, x, y, z * scale);
+        outputCC (x, x3CC, 7.0, 193.0, false);
+        outputCC (y, y3CC, 7.0, 193.0, true);
+        outputCC (z, z3CC, 0.0, 100.0, false);
+    }
+
+    if(modeButtonDown)
+    {
+        // TOP ROW
+        if( y < 0.64) 
+        {
+            if(x < 0.64)
+            {
+                
+                drawNumber(int(xCC), ccTextColour, 0, 0);
+                addPressurePoint(colourX, x, y, z * scale);
+                outputCC (x, xCC, 7.0, 193.0, false);
+            }
+            else if(x < 1.28)
+            {
+                drawNumber(int(yCC), ccTextColour, 0, 0);
+                addPressurePoint(colourY, x, y, z * scale);
+                outputCC (y, yCC, 7.0, 193.0, true);
+            }
+            else
+            {
+                drawNumber(int(zCC), ccTextColour, 0, 0);
+                addPressurePoint(colourZ, x, y, z * scale);
+                outputCC (z, zCC, 0.0, 100.0, false);
+            }        
+        }
+        // SECOND ROW
+        else if( y < 1.28)
+        {
+            if(x < 0.64)
+            {
+                
+                drawNumber(int(x2CC), ccTextColour, 0, 0);
+                addPressurePoint(colourX, x, y, z * scale);
+                outputCC (x, x2CC, 7.0, 193.0, false);
+            }
+            else if(x < 1.28)
+            {
+                drawNumber(int(y2CC), ccTextColour, 0, 0);
+                addPressurePoint(colourY, x, y, z * scale);
+                outputCC (y, y2CC, 7.0, 193.0, true);
+            }
+            else
+            {
+                drawNumber(int(z2CC), ccTextColour, 0, 0);
+                addPressurePoint(colourZ, x, y, z * scale);
+                outputCC (z, z2CC, 0.0, 100.0, false);
+            }        
+        }
+        // THIRD ROW
+        else
+        {
+            if(x < 0.64)
+            {
+                
+                drawNumber(int(x3CC), ccTextColour, 0, 0);
+                addPressurePoint(colourX, x, y, z * scale);
+                outputCC (x, x3CC, 7.0, 193.0, false);
+            }
+            else if(x < 1.28)
+            {
+                drawNumber(int(y3CC), ccTextColour, 0, 0);
+                addPressurePoint(colourY, x, y, z * scale);
+                outputCC (y, y3CC, 7.0, 193.0, true);
+            }
+            else
+            {
+                drawNumber(int(z3CC), ccTextColour, 0, 0);
+                addPressurePoint(colourZ, x, y, z * scale);
+                outputCC (z, z3CC, 0.0, 100.0, false);
+            }        
+        }
+
+        
+        
+    }
+}
+
+void touchStart (int index, float x, float y, float z, float vz)
+{
+    //drawNumber(int(vz * 100), ccTextColour, 0, 3);
+    
+
+    int xval = int(x * 100);
+    int yval = int(y * 100);
+    int vval = int(vz * 100);
+
+    if(xval <= 7 && yval <= 7)
+    {
+        //drawNumber(vval, ccTextColour, 0, 0);
+        if(vval >= toggleSens)
+        {
+            modeButtonDown = !modeButtonDown;
+        }
+        
+    }
+    handleTouch (index, x, y, z, 75.0);
+}
+
+void touchMove (int index, float x, float y, float z, float vz)
+{
+    int xval = int(x * 100);
+    int yval = int(y * 100);
+    if( xval > 7 && yval > 7)
+    {
+        handleTouch (index, x, y, z, 20.0);
+    }
+    
+}
+
+void touchEnd (int index, float x, float y, float z, float vz)
+{
+    
+}
+
+
+/*
+    This defines the 'pixel' grid for the App preview thumbnail in ROLI Dashboard.
+    I used Brian Wang's BLOCKS playground (https://wangpy.github.io/blocks-playground/) to convert an image into canvas data, which I then 
+    kludged into the following pixel data by means of this hurriedly scrawled JS: https://jsfiddle.net/yog9qtsa/. I'd set the top 5 and
+    bottom 5 rows to black, so only needed to convert the middle 5. Some regexp find/replace-fu was required in VS Code. This is not a robust workflow!    
+*/
+
+/*
+<display backgroundColour="0xFFE8486B" textColour ="0xFF000000">
+    <pixels>
+        /// 15 Bottom row, left to right
+        <pixel index="0" colour="0xff000000" />
+        <pixel index="1" colour="0xff000000" />
+        <pixel index="2" colour="0xff000000" />
+        <pixel index="3" colour="0xff000000" />
+        <pixel index="4" colour="0xff000000" />
+        <pixel index="5" colour="0xff000000" />
+        <pixel index="6" colour="0xff000000" />
+        <pixel index="7" colour="0xff000000" />
+        <pixel index="8" colour="0xff000000" />
+        <pixel index="9" colour="0xff000000" />
+        <pixel index="10" colour="0xff000000" />
+        <pixel index="11" colour="0xff000000" />
+        <pixel index="12" colour="0xff000000" />
+        <pixel index="13" colour="0xff000000" />
+        <pixel index="14" colour="0xff000000" />
+        /// 14 Second bottom row, left to right [etc]
+        <pixel index="15" colour="0xff000000" />
+        <pixel index="16" colour="0xff000000" />
+        <pixel index="17" colour="0xff000000" />
+        <pixel index="18" colour="0xff000000" />
+        <pixel index="19" colour="0xff000000" />
+        <pixel index="20" colour="0xff000000" />
+        <pixel index="21" colour="0xff000000" />
+        <pixel index="22" colour="0xff000000" />
+        <pixel index="23" colour="0xff000000" />
+        <pixel index="24" colour="0xff000000" />
+        <pixel index="25" colour="0xff000000" />
+        <pixel index="26" colour="0xff000000" />
+        <pixel index="27" colour="0xff000000" />
+        <pixel index="28" colour="0xff000000" />
+        <pixel index="29" colour="0xff000000" />
+        /// 13
+        <pixel index="30" colour="0xff000000" />
+        <pixel index="31" colour="0xff000000" />
+        <pixel index="32" colour="0xff000000" />
+        <pixel index="33" colour="0xff000000" />
+        <pixel index="34" colour="0xff000000" />
+        <pixel index="35" colour="0xff000000" />
+        <pixel index="36" colour="0xff000000" />
+        <pixel index="37" colour="0xff000000" />
+        <pixel index="38" colour="0xff000000" />
+        <pixel index="39" colour="0xff000000" />
+        <pixel index="40" colour="0xff000000" />
+        <pixel index="41" colour="0xff000000" />
+        <pixel index="42" colour="0xff000000" />
+        <pixel index="43" colour="0xff000000" />
+        <pixel index="44" colour="0xff000000" />
+        /// 12
+        <pixel index="45" colour="0xff000000" />
+        <pixel index="46" colour="0xff000000" />
+        <pixel index="47" colour="0xff000000" />
+        <pixel index="48" colour="0xff000000" />
+        <pixel index="49" colour="0xff000000" />
+        <pixel index="50" colour="0xff000000" />
+        <pixel index="51" colour="0xff000000" />
+        <pixel index="52" colour="0xff000000" />
+        <pixel index="53" colour="0xff000000" />
+        <pixel index="54" colour="0xff000000" />
+        <pixel index="55" colour="0xff000000" />
+        <pixel index="56" colour="0xff000000" />
+        <pixel index="57" colour="0xff000000" />
+        <pixel index="58" colour="0xff000000" />
+        <pixel index="59" colour="0xff000000" />
+        /// 11
+        <pixel index="60" colour="0xff000000" />
+        <pixel index="61" colour="0xff000000" />
+        <pixel index="62" colour="0xff000000" />
+        <pixel index="63" colour="0xff000000" />
+        <pixel index="64" colour="0xff000000" />
+        <pixel index="65" colour="0xff000000" />
+        <pixel index="66" colour="0xff000000" />
+        <pixel index="67" colour="0xff000000" />
+        <pixel index="68" colour="0xff000000" />
+        <pixel index="69" colour="0xff000000" />
+        <pixel index="70" colour="0xff000000" />
+        <pixel index="71" colour="0xff000000" />
+        <pixel index="72" colour="0xff000000" />
+        <pixel index="73" colour="0xff000000" />
+        <pixel index="74" colour="0xff000000" />
+        /// 10  
+        <pixel index="75" colour="0xffb6072"  />
+<pixel index="76" colour="0xff86071" />
+<pixel index="77" colour="0xfff4a56" />
+<pixel index="78" colour="0xff181e28" />
+<pixel index="79" colour="0xff19141e" />
+<pixel index="80" colour="0xff1c131a" />
+<pixel index="81" colour="0xff1f111a" />
+<pixel index="82" colour="0xff22e16" />
+<pixel index="83" colour="0xff23f13" />
+<pixel index="84" colour="0xff261010" />
+<pixel index="85" colour="0xff38282c" />
+<pixel index="86" colour="0xff7d7b77" />
+<pixel index="87" colour="0xffa19c95" />
+<pixel index="88" colour="0xffa49c97" />
+<pixel index="89" colour="0xffa89b96" />
+<pixel index="90" colour="0xff144956" />
+<pixel index="91" colour="0xff1c2f3a" />
+<pixel index="92" colour="0xff1a1e28" />
+<pixel index="93" colour="0xff1d1822" />
+<pixel index="94" colour="0xff23191f" />
+<pixel index="95" colour="0xff251820" />
+<pixel index="96" colour="0xff23151e" />
+<pixel index="97" colour="0xff26151b" />
+<pixel index="98" colour="0xff281418" />
+<pixel index="99" colour="0xff2a1516" />
+<pixel index="100" colour="0xff554946" />
+<pixel index="101" colour="0xff9d9591" />
+<pixel index="102" colour="0xffa39096" />
+<pixel index="103" colour="0xffa18c94" />
+<pixel index="104" colour="0xffac8d9b" />
+<pixel index="105" colour="0xff1c3641" />
+<pixel index="106" colour="0xff1d1c27" />
+<pixel index="107" colour="0xff201d27" />
+<pixel index="108" colour="0xff373133" />
+<pixel index="109" colour="0xff433e40" />
+<pixel index="110" colour="0xff3e3537" />
+<pixel index="111" colour="0xff30262c" />
+<pixel index="112" colour="0xff69635c" />
+<pixel index="113" colour="0xff625651" />
+<pixel index="114" colour="0xff2c191d" />
+<pixel index="115" colour="0xff412e32" />
+<pixel index="116" colour="0xff7e7174" />
+<pixel index="117" colour="0xff9a7d8f" />
+<pixel index="118" colour="0xffa17591" />
+<pixel index="119" colour="0xffa87395" />
+<pixel index="120" colour="0xff272c34" />
+<pixel index="121" colour="0xff241e29" />
+<pixel index="122" colour="0xff444346" />
+<pixel index="123" colour="0xff736f69" />
+<pixel index="124" colour="0xff89847d" />
+<pixel index="125" colour="0xff847571" />
+<pixel index="126" colour="0xff625c5b" />
+<pixel index="127" colour="0xffb09797" />
+<pixel index="128" colour="0xffaf8a93" />
+<pixel index="129" colour="0xff7d746f" />
+<pixel index="130" colour="0xff736b6a" />
+<pixel index="131" colour="0xff8b8183" />
+<pixel index="132" colour="0xff99788d" />
+<pixel index="133" colour="0xff9b658c" />
+<pixel index="134" colour="0xff9e6388" />
+<pixel index="135" colour="0xff373036" />
+<pixel index="136" colour="0xff3f3640" />
+<pixel index="137" colour="0xff82747b" />
+<pixel index="138" colour="0xffab8f95" />
+<pixel index="139" colour="0xffb7939b" />
+<pixel index="140" colour="0xffba809b" />
+<pixel index="141" colour="0xffa09792" />
+<pixel index="142" colour="0xffbd759a" />
+<pixel index="143" colour="0xffb66c96" />
+<pixel index="144" colour="0xff9c6e89" />
+<pixel index="145" colour="0xff917084" />
+<pixel index="146" colour="0xff917087" />
+<pixel index="147" colour="0xff955e88" />
+<pixel index="148" colour="0xff985288" />
+<pixel index="149" colour="0xff7c4560" />
+<pixel index="75" colour="0xffb6072" />
+<pixel index="76" colour="0xff86071" />
+<pixel index="77" colour="0xfff4a56" />
+<pixel index="78" colour="0xff181e28" />
+<pixel index="79" colour="0xff19141e" />
+<pixel index="80" colour="0xff1c131a" />
+<pixel index="81" colour="0xff1f111a" />
+<pixel index="82" colour="0xff22e16" />
+<pixel index="83" colour="0xff23f13" />
+<pixel index="84" colour="0xff261010" />
+<pixel index="85" colour="0xff38282c" />
+<pixel index="86" colour="0xff7d7b77" />
+<pixel index="87" colour="0xffa19c95" />
+<pixel index="88" colour="0xffa49c97" />
+<pixel index="89" colour="0xffa89b96" />
+<pixel index="90" colour="0xff144956" />
+<pixel index="91" colour="0xff1c2f3a" />
+<pixel index="92" colour="0xff1a1e28" />
+<pixel index="93" colour="0xff1d1822" />
+<pixel index="94" colour="0xff23191f" />
+<pixel index="95" colour="0xff251820" />
+<pixel index="96" colour="0xff23151e" />
+<pixel index="97" colour="0xff26151b" />
+<pixel index="98" colour="0xff281418" />
+<pixel index="99" colour="0xff2a1516" />
+<pixel index="100" colour="0xff554946" />
+<pixel index="101" colour="0xff9d9591" />
+<pixel index="102" colour="0xffa39096" />
+<pixel index="103" colour="0xffa18c94" />
+<pixel index="104" colour="0xffac8d9b" />
+<pixel index="105" colour="0xff1c3641" />
+<pixel index="106" colour="0xff1d1c27" />
+<pixel index="107" colour="0xff201d27" />
+<pixel index="108" colour="0xff373133" />
+<pixel index="109" colour="0xff433e40" />
+<pixel index="110" colour="0xff3e3537" />
+<pixel index="111" colour="0xff30262c" />
+<pixel index="112" colour="0xff69635c" />
+<pixel index="113" colour="0xff625651" />
+<pixel index="114" colour="0xff2c191d" />
+<pixel index="115" colour="0xff412e32" />
+<pixel index="116" colour="0xff7e7174" />
+<pixel index="117" colour="0xff9a7d8f" />
+<pixel index="118" colour="0xffa17591" />
+<pixel index="119" colour="0xffa87395" />
+<pixel index="120" colour="0xff272c34" />
+<pixel index="121" colour="0xff241e29" />
+<pixel index="122" colour="0xff444346" />
+<pixel index="123" colour="0xff736f69" />
+<pixel index="124" colour="0xff89847d" />
+<pixel index="125" colour="0xff847571" />
+<pixel index="126" colour="0xff625c5b" />
+<pixel index="127" colour="0xffb09797" />
+<pixel index="128" colour="0xffaf8a93" />
+<pixel index="129" colour="0xff7d746f" />
+<pixel index="130" colour="0xff736b6a" />
+<pixel index="131" colour="0xff8b8183" />
+<pixel index="132" colour="0xff99788d" />
+<pixel index="133" colour="0xff9b658c" />
+<pixel index="134" colour="0xff9e6388" />
+<pixel index="135" colour="0xff373036" />
+<pixel index="136" colour="0xff3f3640" />
+<pixel index="137" colour="0xff82747b" />
+<pixel index="138" colour="0xffab8f95" />
+<pixel index="139" colour="0xffb7939b" />
+<pixel index="140" colour="0xffba809b" />
+<pixel index="141" colour="0xffa09792" />
+<pixel index="142" colour="0xffbd759a" />
+<pixel index="143" colour="0xffb66c96" />
+<pixel index="144" colour="0xff9c6e89" />
+<pixel index="145" colour="0xff917084" />
+<pixel index="146" colour="0xff917087" />
+<pixel index="147" colour="0xff955e88" />
+<pixel index="148" colour="0xff985288" />
+<pixel index="149" colour="0xff7c4560" />
+        /// 5
+        <pixel index="150" colour="0xff000000" />
+        <pixel index="151" colour="0xff000000" />
+        <pixel index="152" colour="0xff000000" />
+        <pixel index="153" colour="0xff000000" />
+        <pixel index="154" colour="0xff000000" />
+        <pixel index="155" colour="0xff000000" />
+        <pixel index="156" colour="0xff000000" />
+        <pixel index="157" colour="0xff000000" />
+        <pixel index="158" colour="0xff000000" />
+        <pixel index="159" colour="0xff000000" />
+        <pixel index="160" colour="0xff000000" />
+        <pixel index="161" colour="0xff000000" />
+        <pixel index="162" colour="0xff000000" />
+        <pixel index="163" colour="0xff000000" />
+        <pixel index="164" colour="0xff000000" />
+        /// 4
+        <pixel index="165" colour="0xff000000" />
+        <pixel index="166" colour="0xff000000" />
+        <pixel index="167" colour="0xff000000" />
+        <pixel index="168" colour="0xff000000" />
+        <pixel index="169" colour="0xff000000" />
+        <pixel index="170" colour="0xff000000" />
+        <pixel index="171" colour="0xff000000" />
+        <pixel index="172" colour="0xff000000" />
+        <pixel index="173" colour="0xff000000" />
+        <pixel index="174" colour="0xff000000" />
+        <pixel index="175" colour="0xff000000" />
+        <pixel index="176" colour="0xff000000" />
+        <pixel index="177" colour="0xff000000" />
+        <pixel index="178" colour="0xff000000" />
+        <pixel index="179" colour="0xff000000" />
+        /// 3
+        <pixel index="180" colour="0xff000000" />
+        <pixel index="181" colour="0xff000000" />
+        <pixel index="182" colour="0xff000000" />
+        <pixel index="183" colour="0xff000000" />
+        <pixel index="184" colour="0xff000000" />
+        <pixel index="185" colour="0xff000000" />
+        <pixel index="186" colour="0xff000000" />
+        <pixel index="187" colour="0xff000000" />
+        <pixel index="188" colour="0xff000000" />
+        <pixel index="189" colour="0xff000000" />
+        <pixel index="190" colour="0xff000000" />
+        <pixel index="191" colour="0xff000000" />
+        <pixel index="192" colour="0xff000000" />
+        <pixel index="193" colour="0xff000000" />
+        <pixel index="194" colour="0xff000000" />
+        /// 2
+        <pixel index="195" colour="0xff000000" />
+        <pixel index="196" colour="0xff000000" />
+        <pixel index="197" colour="0xff000000" />
+        <pixel index="198" colour="0xff000000" />
+        <pixel index="199" colour="0xff000000" />
+        <pixel index="200" colour="0xff000000" />
+        <pixel index="201" colour="0xff000000" />
+        <pixel index="202" colour="0xff000000" />
+        <pixel index="203" colour="0xff000000" />
+        <pixel index="204" colour="0xff000000" />
+        <pixel index="205" colour="0xff000000" />
+        <pixel index="206" colour="0xff000000" />
+        <pixel index="207" colour="0xff000000" />
+        <pixel index="208" colour="0xff000000" />
+        <pixel index="209" colour="0xff000000" />
+        /// 1
+        <pixel index="210" colour="0xff000000" />
+        <pixel index="211" colour="0xff000000" />
+        <pixel index="212" colour="0xff000000" />
+        <pixel index="213" colour="0xff000000" />
+        <pixel index="214" colour="0xff000000" />
+        <pixel index="215" colour="0xff000000" />
+        <pixel index="216" colour="0xff000000" />
+        <pixel index="217" colour="0xff000000" />
+        <pixel index="218" colour="0xff000000" />
+        <pixel index="219" colour="0xff000000" />
+        <pixel index="220" colour="0xff000000" />
+        <pixel index="221" colour="0xff000000" />
+        <pixel index="222" colour="0xff000000" />
+        <pixel index="223" colour="0xff000000" />
+        <pixel index="224" colour="0xff000000" />
+    </pixels>
+</display>
+*/

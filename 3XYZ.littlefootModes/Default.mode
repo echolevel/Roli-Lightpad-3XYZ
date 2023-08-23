@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mode name="Default">
+  <variable name="xCC" value="111"/>
+  <variable name="yCC" value="112"/>
+  <variable name="zCC" value="113"/>
+  <variable name="x2CC" value="114"/>
+  <variable name="y2CC" value="115"/>
+  <variable name="z2CC" value="116"/>
+  <variable name="x3CC" value="117"/>
+  <variable name="y3CC" value="118"/>
+  <variable name="z3CC" value="119"/>
+  <variable name="channel" value="1"/>
+  <variable name="backgroundColour" value="0xFF551963"/>
+  <variable name="ccTextColour" value="0xFFFFFF00"/>
+  <variable name="toggleSens" value="10"/>
+  <variable name="colour" value="0xFF43B9B7"/>
+  <variable name="colour2" value="0xFFE5FFFB"/>
+  <variable name="colour3" value="0xFF57E712"/>
+  <variable name="colourX" value="0xFFEC4646"/>
+  <variable name="colourY" value="0xFF7FEF2B"/>
+  <variable name="colourZ" value="0xFF2959F6"/>
+  <variable name="backgroundColourX" value="0xFFE75431"/>
+  <variable name="backgroundColourY" value="0xFF50CA55"/>
+  <variable name="backgroundColourZ" value="0xFF5C62CC"/>
+</mode>
