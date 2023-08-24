@@ -130,29 +130,7 @@ void outputCC (float v, int cc, float inMin, float inMax, bool invert)
 
 void handleTouch (int index, float x, float y, float z, float scale)
 {
-	if (index == 1)
-    {
-        addPressurePoint (colour, x, y, z * scale);            
-        outputCC (x, xCC, 7.0, 193.0, false);
-        outputCC (y, yCC, 7.0, 193.0, true);
-        outputCC (z, zCC, 0.0, 100.0, false);
-    }
-
-    if(index == 2)
-    {
-        addPressurePoint(colour2, x, y, z * scale);
-        outputCC (x, x2CC, 7.0, 193.0, false);
-        outputCC (y, y2CC, 7.0, 193.0, true);
-        outputCC (z, z2CC, 0.0, 100.0, false);
-    }
-
-    if(index == 3)
-    {
-        addPressurePoint(colour3, x, y, z * scale);
-        outputCC (x, x3CC, 7.0, 193.0, false);
-        outputCC (y, y3CC, 7.0, 193.0, true);
-        outputCC (z, z3CC, 0.0, 100.0, false);
-    }
+	
 
     if(modeButtonDown)
     {
@@ -228,6 +206,33 @@ void handleTouch (int index, float x, float y, float z, float scale)
 
         
         
+    }
+    // Mode button is up
+    else
+    {
+        if (index == 1)
+    {
+        addPressurePoint (colour, x, y, z * scale);            
+        outputCC (x, xCC, 7.0, 193.0, false);
+        outputCC (y, yCC, 7.0, 193.0, true);
+        outputCC (z, zCC, 0.0, 100.0, false);
+    }
+
+    if(index == 2)
+    {
+        addPressurePoint(colour2, x, y, z * scale);
+        outputCC (x, x2CC, 7.0, 193.0, false);
+        outputCC (y, y2CC, 7.0, 193.0, true);
+        outputCC (z, z2CC, 0.0, 100.0, false);
+    }
+
+    if(index == 3)
+    {
+        addPressurePoint(colour3, x, y, z * scale);
+        outputCC (x, x3CC, 7.0, 193.0, false);
+        outputCC (y, y3CC, 7.0, 193.0, true);
+        outputCC (z, z3CC, 0.0, 100.0, false);
+    }
     }
 }
 
