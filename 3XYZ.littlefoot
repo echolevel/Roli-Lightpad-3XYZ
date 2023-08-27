@@ -11,7 +11,14 @@
     </modes>
 
     <groups>
-        <group name="MultiAxis" displayName="Multi Axis" />
+        <group name="Global" displayName="Global" />
+        <group name="PadAX" displayName="Pad A axis X" />
+        <group name="PadAY" displayName="Pad A axis Y" />
+        <group name="PadAZ" displayName="Pad A axis Z" />
+        <group name="PadBX" displayName="Pad B axis X" />
+        <group name="PadBY" displayName="Pad B axis Y" />
+        <group name="PadBZ" displayName="Pad B axis Z" />
+        <group name="PressureBar" displayName="Pressure Bar" />
         <group name="XAssign" displayName="X Assign" />
         <group name="YAssign" displayName="Y Assign" />
         <group name="ZAssign" displayName="Z Assign" />
@@ -21,34 +28,57 @@
     </groups>
 
     <variables>
-        <variable name="xCC" group="MultiAxis" displayName="X Axis CC" type="int" min="0" max="127" value="111" displayMode="stepper" tooltip="The MIDI CC that is sent for X position changes" />
-        <variable name="yCC" group="MultiAxis" displayName="Y Axis CC" type="int" min="0" max="127" value="112" displayMode="stepper" tooltip="The MIDI CC that is sent for Y position changes" />
-        <variable name="zCC" group="MultiAxis" displayName="Z Axis CC" type="int" min="0" max="127" value="113" displayMode="stepper" tooltip="The MIDI CC that is sent for Z (pressure) position changes" />
-
-        <variable name="x2CC" group="MultiAxis" displayName="X2 Axis CC" type="int" min="0" max="127" value="114" displayMode="stepper" tooltip="The MIDI CC that is sent for X2 position changes" />
-        <variable name="y2CC" group="MultiAxis" displayName="Y2 Axis CC" type="int" min="0" max="127" value="115" displayMode="stepper" tooltip="The MIDI CC that is sent for Y2 position changes" />
-        <variable name="z2CC" group="MultiAxis" displayName="Z2 Axis CC" type="int" min="0" max="127" value="116" displayMode="stepper" tooltip="The MIDI CC that is sent for Z2 (pressure) position changes" />
-
-        <variable name="x3CC" group="MultiAxis" displayName="X3 Axis CC" type="int" min="0" max="127" value="117" displayMode="stepper" tooltip="The MIDI CC that is sent for X3 position changes" />
-        <variable name="y3CC" group="MultiAxis" displayName="Y3 Axis CC" type="int" min="0" max="127" value="118" displayMode="stepper" tooltip="The MIDI CC that is sent for Y3 position changes" />
-        <variable name="z3CC" group="MultiAxis" displayName="Z3 Axis CC" type="int" min="0" max="127" value="119" displayMode="stepper" tooltip="The MIDI CC that is sent for Z3 (pressure) position changes" />
-
-        <variable name="channel" group="MultiAxis" displayName="MIDI Channel" type="int" min="1" max="16" value="1" displayMode="stepper" tooltip="The MIDI channel that values are sent on" />
-
-        <variable name="backgroundColour" group="MultiAxis" displayName="Background Color" type="colour" value="0x551963" tooltip="Color of the pad fill" />
-
-        <variable name="ccTextColour" group="MultiAxis" displayName="CC Text Colour" type="colour" value="0xFFFF00"  tooltip="Color of the text displaying the CC being assigned" />
-
-        <variable name="toggleSens" group="MultiAxis" displayName="Toggle Sensitivity" type="int" min="1" max="90" value="10" displayMode="stepper" tooltip="The velocity required to toggle assignment mode by striking the top-left corner of the Lightpad" />
-
-        /// Main XYZ point colour
-        <variable name="colour" group="MultiAxis" displayName="Touch Color" type="colour" value="0x4AC8CA"  tooltip="Color of the touch heat map" />        
         
-        /// Secondary XYZ point colour
-        <variable name="colour2" group="MultiAxis" displayName="Secondary Color" type="colour" value="0xE5FFFB"  tooltip="Color of the secondary touch" />
 
+        
+
+        <variable name="channel" group="Global" displayName="MIDI channel" type="int" value="1" min="0" max="16" displayMode="menu" tooltip="Which MIDI channel to transmit on" />
+        /// Main XYZ point colour
+        <variable name="colour" group="Global" displayName="Touch Color" type="colour" value="0x4AC8CA"  tooltip="Color of the touch heat map" />                
+        /// Secondary XYZ point colour
+        <variable name="colour2" group="Global" displayName="Secondary Color" type="colour" value="0xE5FFFB"  tooltip="Color of the secondary touch" />
         /// Tertiary XYZ point colour
-        <variable name="colour3" group="MultiAxis" displayName="Tertiary Color" type="colour" value="0x1EEB3C"  tooltip="Color of the secondary touch" />
+        <variable name="colour3" group="Global" displayName="Tertiary Color" type="colour" value="0xEB1ECD"  tooltip="Color of the secondary touch" />
+        <variable name="backgroundColour" group="Global" displayName="Background Color" type="colour" value="0x551963" tooltip="Color of the pad fill" />
+        <variable name="ccTextColour" group="Global" displayName="CC Text Colour" type="colour" value="0xFFFF00"  tooltip="Color of the text displaying the CC being assigned" />
+        <variable name="toggleSens" group="Global" displayName="Mapping Mode Sensitivity" type="int" min="1" max="90" value="10" displayMode="stepper" tooltip="The velocity required to toggle assignment mode by striking the top-left corner of the Lightpad" />
+        
+
+
+        <variable name="padAccX" group="PadAX" displayName="Pad A: cc X" type="int" min="0" max="127" value="111" displayMode="stepper" tooltip="The MIDI CC that is sent for Pad A's X axis"/>
+        <variable name="PadAmodeX" group="PadAX" displayName="Pad A: X mode" type="option" options="Normal;Inverted;Bipolar;Binary" value="Bipolar" tooltip="Whether this axis should be normal, bipolar, inverted or binary" />
+        <variable name="PadAreleaseX" group="PadAX" displayName="Pad A: X release" type="option" options="Hold;Spring" value="Spring" tooltip="Whether releasing this axis should result in a default 'reset' value being sent" />
+        <variable name="PadAlerpX" group="PadAX" displayName="Pad A: X return time" type="int" min="0" max="10000" value="120" tooltip="Time in milliseconds for this axis to return to default in Spring release mode. Default is 0 for Normal and Binary, 64 for Bipolar and 127 for Inverted" />
+
+        <variable name="padAccY" group="PadAY" displayName="Pad A: cc Y" type="int" min="0" max="127" value="112" displayMode="stepper" tooltip="The MIDI CC that is sent for Pad A's Y axis"/>
+        <variable name="PadAmodeY" group="PadAY" displayName="Pad A: Y mode" type="option" options="Normal;Inverted;Bipolar;Binary" value="Normal" tooltip="Whether this axis should be normal, bipolar, inverted or binary" />
+        <variable name="PadAreleaseY" group="PadAY" displayName="Pad A: Y release" type="option" options="Hold;Spring" value="Hold" tooltip="Whether releasing this axis should result in a default 'reset' value being sent" />
+        <variable name="PadAlerpY" group="PadAY" displayName="Pad A: Y return time" type="int" min="0" max="10000" value="120" tooltip="Time in milliseconds for this axis to return to default in Spring release mode. Default is 0 for Normal and Binary, 64 for Bipolar and 127 for Inverted" />
+
+        <variable name="padAccZ" group="PadAZ" displayName="Pad A: cc Z" type="int" min="0" max="127" value="113" displayMode="stepper" tooltip="The MIDI CC that is sent for Pad A's Z axis"/>
+        <variable name="PadAmodeZ" group="PadAZ" displayName="Pad A: Z mode" type="option" options="Normal;Inverted;Binary" value="Normal" tooltip="Whether this axis should be normal, inverted or binary" />
+        <variable name="PadAlerpZ" group="PadAZ" displayName="Pad A: Z return time" type="int" min="0" max="10000" value="120" tooltip="Time in milliseconds for this axis to return to default in Spring release mode. Default is 0 for Normal and Binary and 127 for Inverted" />
+
+
+
+
+        <variable name="padBccX" group="PadBX" displayName="Pad B: cc X" type="int" min="0" max="127" value="114" displayMode="stepper" tooltip="The MIDI CC that is sent for Pad A's X axis"/>
+        <variable name="PadBmodeX" group="PadBX" displayName="Pad B: X mode" type="option" options="Normal;Inverted;Bipolar;Binary" value="Bipolar" tooltip="Whether this axis should be normal, bipolar, inverted or binary" />
+        <variable name="PadBreleaseX" group="PadBX" displayName="Pad B: X release" type="option" options="Hold;Spring" value="Spring" tooltip="Whether releasing this axis should result in a default 'reset' value being sent" />
+        <variable name="PadBlerpX" group="PadBX" displayName="Pad B: X return time" type="int" min="0" max="10000" value="120" tooltip="Time in milliseconds for this axis to return to default in Spring release mode. Default is 0 for Normal and Binary, 64 for Bipolar and 127 for Inverted" />
+
+        <variable name="padBccY" group="PadBY" displayName="Pad B: cc Y" type="int" min="0" max="127" value="115" displayMode="stepper" tooltip="The MIDI CC that is sent for Pad A's Y axis"/>
+        <variable name="PadBmodeY" group="PadBY" displayName="Pad B: Y mode" type="option" options="Normal;Inverted;Bipolar;Binary" value="Normal" tooltip="Whether this axis should be normal, bipolar, inverted or binary" />
+        <variable name="PadBreleaseY" group="PadBY" displayName="Pad B: Y release" type="option" options="Hold;Spring" value="Hold" tooltip="Whether releasing this axis should result in a default 'reset' value being sent" />
+        <variable name="PadBlerpY" group="PadBY" displayName="Pad B: Y return time" type="int" min="0" max="10000" value="120" tooltip="Time in milliseconds for this axis to return to default in Spring release mode. Default is 0 for Normal and Binary, 64 for Bipolar and 127 for Inverted" />
+
+        <variable name="padBccZ" group="PadBZ" displayName="Pad B: cc Z" type="int" min="0" max="127" value="116" displayMode="stepper" tooltip="The MIDI CC that is sent for Pad A's Z axis"/>
+        <variable name="PadBmodeZ" group="PadBZ" displayName="Pad B: Z mode" type="option" options="Normal;Inverted;Binary" value="Normal" tooltip="Whether this axis should be normal, inverted or binary" />
+        <variable name="PadBlerpZ" group="PadBZ" displayName="Pad B: Z return time" type="int" min="0" max="10000" value="120" tooltip="Time in milliseconds for this axis to return to default in Spring release mode. Default is 0 for Normal and Binary, 64 for Bipolar and 127 for Inverted" />
+
+
+        <variable name="pressureBarZ" group="PressureBar" displayName="Pressure CC" type="int" min="0" max="127" value="117" displayMode="stepper" tooltip="The MIDI CC that is sent for the pressure bar's Z axis"/>        
+
 
         /// Assignment colours/bgcolours
         <variable name="colourX" group="XAssign" displayName="X Touch Color" type="colour" value="0xEC4646"  tooltip="Color of the touch heat map when assigning X" />
@@ -58,12 +88,45 @@
         <variable name="backgroundColourY" group="YAssign" displayName="Y Background Color" type="colour" value="0x50CA55" tooltip="Color of the pad fill when assigning Y" />
         <variable name="backgroundColourZ" group="ZAssign" displayName="Z Background Color" type="colour" value="0x5C62CC" tooltip="Color of the pad fill when assigning Z" />
 
+
+        <vector count="3" wantsGetFunctions="true" wantsSetFunctions="true">
+            <variable name="zoneX" type="int" value="0" visible="false" />
+            <variable name="zoneY" type="int" value="0" visible="false" />
+            <variable name="zoneW" type="int" value="0" visible="false" />
+            <variable name="zoneH" type="int" value="0" visible="false" />
+        </vector>
+
     </variables>
 </metadata>
+
+TO DO:
+    Reorganise UI and CC config.
+    Each slider zone will be a discrete X/Y/Z pad, and the bottom bar will be a pressure pad.    
+    UI Options for X, Y and Z for the output to be normal, bipolar, inverted or binary.
+    UI Options for X and Y to Hold; or Spring to zero (normal) or 50% (bipolar), with optional lerp time.
+    Improve the colours for the Mapping Mode screen. Rerrange so we have:
+        x   x
+        y   y
+        z   z
+          z
+    
+    Hold shouldn't be an option for Z axes, since that makes no sense.
+
+Notes:
+    Metadata types: https://forum.juce.com/t/global-array-support-for-littlefoot/32394/5
+
 */
 bool gammaCorrected;
-bool modeButtonDown;
-
+bool modeButtonDown; // Are we in Mapping Mode?
+int lastMillisCount; // Used to calculate Delta time
+int fadeMillis; // How many milliseconds should it take for a zone background to fade out?
+int fadeCounters[4]; // Stores fadeout counters (milliseconds) for zones 1-4
+int zoneCount;
+int entryZones[5][4]; // Stores a zone for touch indices 1 to 5, -1 for unassigned
+float zonePressure[4];
+int zoneXMidiValue[4]; // 0-127. We store these in case we need to lerp after release
+int zoneYMidiValue[4]; // 0-127. We store these in case we need to lerp after release
+bool touchDown[5]; // Stores a 'down' state for touch indices 1 to 5
 
 void initialise()
 {
@@ -72,7 +135,83 @@ void initialise()
 
     setLocalConfig (33, 1);
     gammaCorrected = getLocalConfig (33) > 0;
-    modeButtonDown = false;
+    modeButtonDown = false;    
+    lastMillisCount = 0;    
+    fadeMillis = 1000;    
+
+    for(int i = 0; i < 4; i++)
+    {
+        fadeCounters[i] = fadeMillis;
+    }
+
+    // Define our zones    
+    zoneCount = 3;
+    // We use these autogenerated setters/getters in conjunction with the metadata vector because 2d arrays 
+    // aren't initialised properly in this function. Not sure why.
+    
+    setZoneX(0, 0);
+    setZoneY(0, 0);
+    setZoneW(0, 7);
+    setZoneH(0, 12);
+
+    setZoneX(1, 8);
+    setZoneY(1, 0);
+    setZoneW(1, 7);
+    setZoneH(1, 12);
+
+    setZoneX(2, 0);
+    setZoneY(2, 13);
+    setZoneW(2, 14);
+    setZoneH(2, 2);
+
+    for(int i = 0; i < 5; i++)
+    {
+        for(int k = 0; k < 4; k++)
+        {
+            entryZones[i][k] = -1;
+        }
+    }
+
+    for(int i = 0; i < 5; i++)
+    {
+        touchDown[i] = false;
+    }
+}
+
+// When developing with just ROLI Dashboard (not Blocks or VS++), this is a quick way of seeing some integer values in a DAW
+void debugCC(int chan, int val1, int val2, int val3, int val4)
+{
+    sendCC (chan, 2, val1);
+    sendCC (chan, 3, val2);
+    sendCC (chan, 4, val3);
+    sendCC (chan, 5, val4);
+}
+
+// Returns the index of a zone if the incoming coordinates fall within that zone; otherwise returns -1
+int checkZone(float x, float y)
+{
+    
+    // Grid zone checks can be low resolution (0-14) 
+    int xLedPos =  int(map(x, 0.07, 1.93, 0.0, 14.0));
+    int yLedPos = int(map(y, 0.07, 1.93, 0.0, 14.0));    
+    int outZone = -1;
+
+    for (int i = 0; i < zoneCount; i++)
+    {        
+        //debugCC(10, xpos, ypos, width, height);
+
+        if( (xLedPos >= getZoneX(i)) // Greater than or equal to zone X
+            && (xLedPos < getZoneX(i) + getZoneW(i)) // Less than zone X plus zone Width
+            && (yLedPos >= getZoneY(i)) // Greater than or equal to zone Y
+            && (yLedPos < getZoneY(i) + getZoneH(i)) // Less than zone Y plus zone Height
+        ) 
+        {
+            outZone = i;    
+        }
+        
+    }
+
+    return outZone;
 }
 
 // Using the Lightpad's Mode button as a shift key: when down, we can assign X, Y and Z axes for Main, Secondary and Tertiary touch points
@@ -90,28 +229,93 @@ void handleButtonUp(int index)
 
 void repaint()
 {    
+    int DeltaTime = getMillisecondCounter() - lastMillisCount;
+    lastMillisCount = getMillisecondCounter();
+
+    for(int f = 0; f < 4; f++)
+    {
+        if(fadeCounters[f] > 0)
+        {
+            fadeCounters[f] -= DeltaTime;
+            fadeCounters[f] = max(fadeCounters[f], 0);
+        }
+    }
+
+
     clearDisplay(backgroundColour);
     if(modeButtonDown)
     {
         // TOP ROW
-        fillRect( backgroundColourX, 0, 0, 5, 4);
-        fillRect( backgroundColourY, 5, 0, 10, 4);
-        fillRect( backgroundColourZ, 10, 0, 15, 4);
+        fillRect( colour3, 0, 1, 7, 3);
+        fillRect( colour3, 8, 1, 7, 3);
+        
 
         // SECOND ROW
-        fillRect( backgroundColourX, 0, 5, 5, 4);
-        fillRect( backgroundColourY, 5, 5, 10, 4);
-        fillRect( backgroundColourZ, 10, 5, 15, 4);
+        fillRect( colour, 0, 5, 7, 3);
+        fillRect( colour, 8, 5, 7, 3);
+        
 
         // THIRD ROW
 
-        fillRect( backgroundColourX, 0, 10, 5, 4);
-        fillRect( backgroundColourY, 5, 10, 10, 4);
-        fillRect( backgroundColourZ, 10, 10, 15, 4);
+        fillRect( colour2, 0, 9, 7, 3);
+        fillRect( colour2, 8, 9, 7, 3);
+        
+
+        // Pressure/pitch
+        blendGradientRect(0xff144956, colour, colour2, colour2, 0, 13, 8, 14);
+        blendGradientRect(colour, 0xff144956, colour2, colour2, 7, 13, 8, 14);
+    }
+    else
+    {
+        
+        int startR = (colour3 >> 16) & 0XFF;
+        int startG = (colour3 >> 8) & 0XFF;
+        int startB = (colour3) & 0XFF;
+        
+        int endR = (colour2 >> 16) & 0xFF;
+        int endG = (colour2 >> 8) & 0xFF;
+        int endB = (colour2) & 0xFF;
+
+        int zonePressA = int(zonePressure[0] * 127.0);
+
+        int startA1 = int((fadeCounters[0] * 127) / 1000.0);
+        startA1 += zonePressA;
+        int endA1 = int((fadeCounters[0] * 127) / 1000.0);
+        endA1 += zonePressA;
+        int startCol1 = makeARGB(startA1, startR, startG, startB);
+        int endCol1 = makeARGB(endA1, endR, endG, endB);
+
+        int zonePressB = int(zonePressure[1] * 127.0);
+
+        int startA2 = int((fadeCounters[1] * 127) / 1000.0);
+        startA2 += zonePressB;
+        int endA2 = int((fadeCounters[1] * 127) / 1000.0);
+        endA2 += zonePressB;
+        int startCol2 = makeARGB(startA2, startR, startG, startB);
+        int endCol2 = makeARGB(endA2, endR, endG, endB);
+        
+
+        // Two X/Y faders
+        blendGradientRect(startCol1, startCol1, endCol1, endCol1, 0, 0, 7, 12);
+        blendGradientRect(startCol2, startCol2, endCol2, endCol2, 8, 0, 7, 12);
+
+        // Pressure/pitch
+        blendGradientRect(0xff144956, colour, colour2, colour2, 0, 13, 8, 14);
+        blendGradientRect(colour, 0xff144956, colour2, colour2, 7, 13, 8, 14);
+
+        //drawNumber(int((fadeCounters[0] * 255) / 1000.0), colour2, 0, 0);       
+
     }
 
     drawPressureMap();
     fadePressureMap();    
+        
+         
+}
+
+float lerp(float a, float b, float t)
+{
+    return b + (a - b) * t;
 }
 
 int mapTouchToRange (float v, float inMin, float inMax, float outMax)
@@ -128,124 +332,145 @@ void outputCC (float v, int cc, float inMin, float inMax, bool invert)
     sendCC ((channel - 1), cc, value);
 }
 
-void handleTouch (int index, float x, float y, float z, float scale)
+void handleTouch (int index, float x, float y, float z, float scale, bool IsTouchEnd)
 {
-	
+    
+	// Grid zone checks can be low resolution (0-14) 
+    int xLedPos =  int(map(x, 0.07, 1.93, 0.0, 14.0));
+    int yLedPos = int(map(y, 0.07, 1.93, 0.0, 14.0));    
 
+    // Mapping Mode
     if(modeButtonDown)
     {
-        // TOP ROW
-        if( y < 0.64) 
+        // Top row
+        if( yLedPos < 4) 
         {
-            if(x < 0.64)
+            if(xLedPos < 7)
             {
                 
-                drawNumber(int(xCC), ccTextColour, 0, 0);
+                drawNumber(int(padAccX), ccTextColour, 0, 0);
                 addPressurePoint(colourX, x, y, z * scale);
-                outputCC (x, xCC, 7.0, 193.0, false);
-            }
-            else if(x < 1.28)
-            {
-                drawNumber(int(yCC), ccTextColour, 0, 0);
-                addPressurePoint(colourY, x, y, z * scale);
-                outputCC (y, yCC, 7.0, 193.0, true);
-            }
+                outputCC (x, padAccX, 7.0, 193.0, false);
+            }            
             else
             {
-                drawNumber(int(zCC), ccTextColour, 0, 0);
-                addPressurePoint(colourZ, x, y, z * scale);
-                outputCC (z, zCC, 0.0, 100.0, false);
+                drawNumber(int(padBccX), ccTextColour, 0, 0);
+                addPressurePoint(colourX, x, y, z * scale);
+                outputCC (z, padBccX, 0.0, 100.0, false);
             }        
         }
-        // SECOND ROW
-        else if( y < 1.28)
+        // Middle row
+        else if( yLedPos < 8)
         {
-            if(x < 0.64)
+            if(xLedPos < 7)
             {
                 
-                drawNumber(int(x2CC), ccTextColour, 0, 0);
+                drawNumber(int(padAccY), ccTextColour, 0, 0);
                 addPressurePoint(colourX, x, y, z * scale);
-                outputCC (x, x2CC, 7.0, 193.0, false);
-            }
-            else if(x < 1.28)
-            {
-                drawNumber(int(y2CC), ccTextColour, 0, 0);
-                addPressurePoint(colourY, x, y, z * scale);
-                outputCC (y, y2CC, 7.0, 193.0, true);
-            }
+                outputCC (x, padAccY, 7.0, 193.0, false);
+            }            
             else
             {
-                drawNumber(int(z2CC), ccTextColour, 0, 0);
-                addPressurePoint(colourZ, x, y, z * scale);
-                outputCC (z, z2CC, 0.0, 100.0, false);
+                drawNumber(int(padBccY), ccTextColour, 0, 0);
+                addPressurePoint(colourX, x, y, z * scale);
+                outputCC (z, padBccY, 0.0, 100.0, false);
             }        
         }
-        // THIRD ROW
+        // third row
+        else if( yLedPos < 12)
+        {
+            if(xLedPos < 7)
+            {
+                
+                drawNumber(int(padAccZ), ccTextColour, 0, 0);
+                addPressurePoint(colourX, x, y, z * scale);
+                outputCC (x, padAccZ, 7.0, 193.0, false);
+            }            
+            else
+            {
+                drawNumber(int(padBccZ), ccTextColour, 0, 0);
+                addPressurePoint(colourX, x, y, z * scale);
+                outputCC (z, padBccZ, 0.0, 100.0, false);
+            }        
+        }
+        // Bottom row
         else
         {
-            if(x < 0.64)
-            {
-                
-                drawNumber(int(x3CC), ccTextColour, 0, 0);
-                addPressurePoint(colourX, x, y, z * scale);
-                outputCC (x, x3CC, 7.0, 193.0, false);
-            }
-            else if(x < 1.28)
-            {
-                drawNumber(int(y3CC), ccTextColour, 0, 0);
+                drawNumber(int(pressureBarZ), ccTextColour, 0, 0);
                 addPressurePoint(colourY, x, y, z * scale);
-                outputCC (y, y3CC, 7.0, 193.0, true);
-            }
-            else
-            {
-                drawNumber(int(z3CC), ccTextColour, 0, 0);
-                addPressurePoint(colourZ, x, y, z * scale);
-                outputCC (z, z3CC, 0.0, 100.0, false);
-            }        
+                outputCC (y, pressureBarZ, 7.0, 193.0, true);     
         }
 
         
         
     }
-    // Mode button is up
+    // Control (normal) mode
     else
     {
-        if (index == 1)
-    {
-        addPressurePoint (colour, x, y, z * scale);            
-        outputCC (x, xCC, 7.0, 193.0, false);
-        outputCC (y, yCC, 7.0, 193.0, true);
-        outputCC (z, zCC, 0.0, 100.0, false);
-    }
+        // Pressure/pitch bar
+        if(yLedPos >= 13)
+        {
+            addPressurePoint(colour2, x, y, z * scale);
+            outputCC (z, pressureBarZ, 0.0, 100.0, false);
+            
+        }
+        else
+        {            
 
-    if(index == 2)
-    {
-        addPressurePoint(colour2, x, y, z * scale);
-        outputCC (x, x2CC, 7.0, 193.0, false);
-        outputCC (y, y2CC, 7.0, 193.0, true);
-        outputCC (z, z2CC, 0.0, 100.0, false);
-    }
+            if(entryZones[index] >= 0 && touchDown[index])
+            {
+                // This index was in a zone, so we should reset the corresponding fade timer
+                fadeCounters[entryZones[index]] = fadeMillis;
+            }
 
-    if(index == 3)
-    {
-        addPressurePoint(colour3, x, y, z * scale);
-        outputCC (x, x3CC, 7.0, 193.0, false);
-        outputCC (y, y3CC, 7.0, 193.0, true);
-        outputCC (z, z3CC, 0.0, 100.0, false);
-    }
+            int xLimited = clamp(getZoneX(entryZones[index]), getZoneX(entryZones[index]) + getZoneW(entryZones[index])-2, xLedPos);
+            int yLimited = clamp(getZoneY(entryZones[index]), getZoneY(entryZones[index]) + getZoneH(entryZones[index])-2, yLedPos);
+
+            x = map(float(xLimited), 0.0, 14.0, 0.07, 1.93);
+            y = map(float(yLimited), 0.0, 14.0, 0.07, 1.93);
+
+            addPressurePoint (colour, x, y, z * scale);            
+
+            zonePressure[entryZones[index]] = z;
+
+            // THIS IS BAD. It quantises and steps the value. We need to start all this by limiting the float value.
+            zoneXMidiValue[entryZones[index]] = int(map(float(xLimited), 0.0, float(getZoneW(entryZones[index])), 0.0, 127.0));
+            zoneYMidiValue[entryZones[index]] = int(map(float(yLimited), 0.0, float(getZoneH(entryZones[index])), 0.0, 127.0));
+
+            // PAD A
+            if(entryZones[index] == 0)
+            {
+                sendCC((channel-1), padAccX, zoneXMidiValue[entryZones[index]]);
+                sendCC((channel-1), padAccY, 127 - zoneYMidiValue[entryZones[index]]);
+                sendCC((channel-1), padAccZ, int(z * 127.0));
+            }
+
+            // PAD B
+            if(entryZones[index] == 1)
+            {
+                sendCC((channel-1), padBccX, zoneXMidiValue[entryZones[index]]);
+                sendCC((channel-1), padBccY, 127 - zoneYMidiValue[entryZones[index]]);
+                sendCC((channel-1), padBccZ, int(z * 127.0));
+            }
+            
+
+            //outputCC (x, padAccX, 7.0, 193.0, false);
+            //outputCC (y, padAccY, 7.0, 193.0, true);
+        }
+        
     }
 }
 
 void touchStart (int index, float x, float y, float z, float vz)
-{
-    //drawNumber(int(vz * 100), ccTextColour, 0, 3);
-    
+{        
 
-    int xval = int(x * 100);
-    int yval = int(y * 100);
+    // Grid zone checks can be low resolution (0-14) 
+    int xLedPos =  int(map(x, 0.07, 1.93, 0.0, 14.0));
+    int yLedPos = int(map(y, 0.07, 1.93, 0.0, 14.0));    
     int vval = int(vz * 100);
 
-    if(xval <= 7 && yval <= 7)
+    // Top left
+    if(xLedPos <= 0 && yLedPos <= 0)
     {
         //drawNumber(vval, ccTextColour, 0, 0);
         if(vval >= toggleSens)
@@ -254,23 +479,40 @@ void touchStart (int index, float x, float y, float z, float vz)
         }
         
     }
-    handleTouch (index, x, y, z, 75.0);
+
+    // We only track up to 5 fingers
+    if(index < 5)
+    {        
+        touchDown[index] = true;
+        entryZones[index] = checkZone(x,y);
+    }
+    
+
+    handleTouch (index, x, y, z, 75.0, false);
 }
 
 void touchMove (int index, float x, float y, float z, float vz)
-{
-    int xval = int(x * 100);
-    int yval = int(y * 100);
-    if( xval > 7 && yval > 7)
-    {
-        handleTouch (index, x, y, z, 20.0);
-    }
+{        
     
+    handleTouch (index, x, y, z, 20.0, false);
 }
 
 void touchEnd (int index, float x, float y, float z, float vz)
 {
-    
+    if(index < 5)
+    {
+        if(entryZones[index] >= 0 && touchDown[index])
+        {
+            // This index was in a zone, so we should start the corresponding fadeout
+            fadeCounters[entryZones[index]] = fadeMillis;
+        }
+
+        touchDown[index] = false; // then release the touchDown...
+        entryZones[index] = -1; // and invalidate the zone index
+    }
+
+    handleTouch (index, x, y, z, vz, true);
+
 }
 
 
