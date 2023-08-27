@@ -23,7 +23,7 @@
         <variable name="colour2" group="Global" displayName="Secondary Color" type="colour" value="0xE5FFFB"  tooltip="Color of the secondary touch" />
         /// Tertiary XYZ point colour
         <variable name="colour3" group="Global" displayName="Tertiary Color" type="colour" value="0xEB1ECD"  tooltip="Color of the secondary touch" />
-        <variable name="backgroundColour" group="Global" displayName="Background Color" type="colour" value="0x551963" tooltip="Color of the pad fill" />
+        <variable name="backgroundColour" group="Global" displayName="Background Color" type="colour" value="0x9644A9" tooltip="Color of the pad fill" />
         <variable name="ccTextColour" group="Global" displayName="CC Text Colour" type="colour" value="0xFFFF00"  tooltip="Color of the text displaying the CC being assigned" />
         <variable name="colourX" group="Global" displayName="Mapping Touch Color" type="colour" value="0xEC4646"  tooltip="Color of the touch heat map when assigning X" />        
         <variable name="channel" group="Global" displayName="MIDI channel" type="int" value="1" min="0" max="16" displayMode="menu" tooltip="Which MIDI channel to transmit on" />
@@ -45,8 +45,12 @@
 
         </vector>
 
-        <variable name="pressureBarZ" group="PressureBar" displayName="Pressure CC" type="int" min="0" max="127" value="117" displayMode="stepper" tooltip="The MIDI CC that is sent for the pressure bar's Z axis"/>        
+        <variable name="pressureBarZ" group="PressureBar" displayName="Pressure Bar Z CC" type="int" min="0" max="127" value="117" displayMode="stepper" tooltip="The MIDI CC that is sent for the pressure bar's Z axis"/>        
         <variable name="pressureBarmodeZ" group="PressureBar" displayName="Pressure Bar: Z mode" type="option" options="Normal;Inverted;Binary" value="Normal" tooltip="Whether this axis should be normal, inverted or binary" />
+        <variable name="pressureBarX" group="PressureBar" displayName="Pressure Bar Slider CC" type="int" min="0" max="127" value="118" displayMode="stepper" tooltip="The MIDI CC that is sent for the X axis of the pressure bar" />
+        <variable name="pressureBarModeX" group="PressureBar" displayName="Pressure Bar X Mode" type="option" options="Normal;Inverted;Bipolar" value="Normal" tooltip="Whether this axis should be normal, bipolar or inverted" />
+        <variable name="pressureBarReleaseX" group="PressureBar" displayName="Pressure Bar X Release" type="option" options="Hold;Spring" value="Hold" tooltip="Whether releasing this axis should result in a default 'reset' value being sent" />
+        <variable name="pressureBarLerpX" group="PressureBar" displayName="X return time" type="float" min="0.0" max="1.0" value="0.5" tooltip="Speed at which this axis will return to default in Spring release mode. Default is 0 for Normal, 64 for Bipolar and 127 for Inverted" />
 
         <vector count="3" wantsGetFunctions="true" wantsSetFunctions="true">
             <variable name="zoneX1" type="int" value="0" visible="false" />
@@ -67,8 +71,12 @@ Notes:
 bool gammaCorrected;
 bool modeButtonDown; // Are we in Mapping Mode?
 int lastMillisCount; // Used to calculate Delta time
+
 int fadeMillis; // How many milliseconds should it take for a zone background to fade out?
 int fadeCounters[4]; // Stores fadeout counters (milliseconds) for zones 1-4
+int fadeUpMillis; // How many milliseconds should it take for a zone background to fade in?
+int fadeUpCounters[4]; // Stores fadein counters (milliseconds) for zones 1-4
+
 int zoneCount;
 int entryZones[5][4]; // Stores a zone for touch indices 1 to 5, -1 for unassigned
 float zonePressure[4];
@@ -179,19 +187,23 @@ void handleButtonUp(int index)
 
 void repaint()
 {    
-    clearDisplay(backgroundColour);
+    clearDisplay(0x000000);
+    
+
 
     int DeltaTime = getMillisecondCounter() - lastMillisCount;
     lastMillisCount = getMillisecondCounter();
 
-    for(int f = 0; f < 4; f++)
+    for(int p = 0; p < 4; p++)
     {
-        if(fadeCounters[f] > 0)
+        if(fadeCounters[p] > 0)
         {
-            fadeCounters[f] -= DeltaTime;
-            fadeCounters[f] = max(fadeCounters[f], 0);
-        }        
+            fadeCounters[p] -= DeltaTime;
+            fadeCounters[p] = max(fadeCounters[p], 0);
+        }
+        
     }
+
 
     // Check if there are spring releases to lerp
     for(int i = 0; i < 2; i++)
@@ -212,8 +224,15 @@ void repaint()
             }
         }
     }
-
-
+    // Special case: check the pressure bar's X slider
+    if(entryZones[2] < 0)
+    {
+        if(zoneXMidiValue[2] != zoneXSpringTarget[2])
+        {
+            zoneXMidiValue[2] = int(lerp(float(zoneXMidiValue[2]), float(zoneXSpringTarget[2]), pressureBarLerpX));
+            sendCC((channel-1), pressureBarX, zoneXMidiValue[2]);
+        }
+    }
     
     if(modeButtonDown)
     {
@@ -234,12 +253,19 @@ void repaint()
         
 
         // Pressure/pitch
-        blendGradientRect(0xff144956, colour, colour2, colour2, 0, 13, 8, 14);
-        blendGradientRect(colour, 0xff144956, colour2, colour2, 7, 13, 8, 14);
+        blendGradientRect(0xff144956, colour, colour2, colour2, 0, 13, 7, 14);
+        blendGradientRect(colour, 0xff144956, colour2, colour2, 8, 13, 8, 14);
     }
     else
     {
+        // https://stackoverflow.com/questions/1787124/programmatically-darken-a-hex-colour
+        int bgDarker = (backgroundColour & 0x4e4e4e) >> 1;
+        int col2Darker = (colour2 & 0x4e4e4e) >> 1;
         
+        fillRect(bgDarker, 0, 0, 15, 15);
+        blendGradientRect(bgDarker, backgroundColour, colour2, col2Darker, 0, 0, 7, 12);
+        blendGradientRect(backgroundColour, bgDarker, col2Darker, colour2, 8, 0, 7, 12);
+
         int startR = (colour3 >> 16) & 0XFF;
         int startG = (colour3 >> 8) & 0XFF;
         int startB = (colour3) & 0XFF;
@@ -275,7 +301,9 @@ void repaint()
         blendGradientRect(0xff144956, colour, colour2, colour2, 0, 13, 8, 14);
         blendGradientRect(colour, 0xff144956, colour2, colour2, 7, 13, 8, 14);
 
-        //drawNumber(int((fadeCounters[0] * 255) / 1000.0), colour2, 0, 0);       
+        int sliderX = int(map(float(zoneXMidiValue[2]), 0.0, 127.0, 0.0, 15.0));
+        fillPixel(colour2, sliderX, 13);
+        fillPixel(colour2, sliderX, 14);
 
     }
 
@@ -359,6 +387,39 @@ void handleTouch (int index, float x, float y, float z, float scale, bool IsTouc
                     
                 }
 
+                if(IsReleased)
+                {
+                    if(pressureBarReleaseX == 0) // Hold
+                    {
+                        zoneXSpringTarget[2] = zoneXMidiValue[entryZones[index]]; // Set these the same so no work is done in redraw
+                        sendCC((channel-1), pressureBarX, zoneXMidiValue[entryZones[index]]);
+                    }
+                    else if(pressureBarReleaseX == 1) // Spring
+                    {
+                        if(pressureBarLerpX > 0)
+                        {
+                            if(pressureBarModeX == 0) zoneXSpringTarget[2] = 0; // Normal
+                            if(pressureBarModeX == 1) zoneXSpringTarget[2] = 127; // Inverted
+                            if(pressureBarModeX == 2) zoneXSpringTarget[2] = 63; // Bipolar
+                        }
+                        else
+                        {
+                            if(pressureBarModeX == 0) sendCC((channel-1), pressureBarX, 0); // Normal
+                            if(pressureBarModeX == 1) sendCC((channel-1), pressureBarX, 127); // Inverted
+                            if(pressureBarModeX == 2) sendCC((channel-1), pressureBarX, 63); // Bipolar
+                        }
+                    }
+                }
+                else
+                {
+                    zoneXSpringTarget[2] = zoneXMidiValue[entryZones[index]]; // Set these the same so no work is done in redraw
+                    if(pressureBarModeX == 0) sendCC((channel-1), pressureBarX, zoneXMidiValue[entryZones[index]]); // Normal
+                    if(pressureBarModeX == 1) sendCC((channel-1), pressureBarX, 127 - zoneXMidiValue[entryZones[index]]); // Inverted
+                    if(pressureBarModeX == 2) sendCC((channel-1), pressureBarX, 64 + (zoneXMidiValue[entryZones[index]] - 64)); // Bipolar              
+                }
+
+                
+
             }
             // XYZ Pads
             else 
@@ -393,7 +454,7 @@ void handleTouch (int index, float x, float y, float z, float scale, bool IsTouc
                     zoneXSpringTarget[padIdx] = zoneXMidiValue[entryZones[index]]; // Set these the same so no work is done in redraw
                     if(getModeX(padIdx) == 0) sendCC((channel-1), getCcX(padIdx), zoneXMidiValue[entryZones[index]]); // Normal
                     if(getModeX(padIdx) == 1) sendCC((channel-1), getCcX(padIdx), 127 - zoneXMidiValue[entryZones[index]]); // Inverted
-                    if(getModeX(padIdx) == 2) sendCC((channel-1), getCcX(padIdx), 64 + (zoneXMidiValue[entryZones[index]] - 64)); // Bipolar
+                    if(getModeX(padIdx) == 2) sendCC((channel-1), getCcX(padIdx), 64 + (zoneXMidiValue[entryZones[index]] - 64)); // Bipolar                    
                 }
                 
                 // Y
@@ -458,8 +519,8 @@ void handleTouch (int index, float x, float y, float z, float scale, bool IsTouc
             int padIdx = 0;
             if(xLedPos >= 7) padIdx = 1;
 
-            drawNumber(getCcX(padIdx), ccTextColour, 0, 0);
-            addPressurePoint(colourX, x, y, z * scale);
+            drawNumber(getCcX(padIdx), colour2, 0, 0);
+            //addPressurePoint(colourX, x, y, z * scale);
             outputCC (z, getCcX(padIdx), 7.0, 193.0, false);            
         }
         // Middle row
@@ -468,8 +529,8 @@ void handleTouch (int index, float x, float y, float z, float scale, bool IsTouc
             int padIdx = 0;
             if(xLedPos >= 7) padIdx = 1;
 
-            drawNumber(getCcY(padIdx), ccTextColour, 0, 0);
-            addPressurePoint(colourX, x, y, z * scale);
+            drawNumber(getCcY(padIdx), colour2, 0, 0);
+            //addPressurePoint(colourX, x, y, z * scale);
             outputCC (z, getCcY(padIdx), 7.0, 193.0, false);            
         }
         // third row
@@ -478,16 +539,28 @@ void handleTouch (int index, float x, float y, float z, float scale, bool IsTouc
             int padIdx = 0;
             if(xLedPos >= 7) padIdx = 1;
 
-            drawNumber(getCcZ(padIdx), ccTextColour, 0, 0);
-            addPressurePoint(colourX, x, y, z * scale);
+            drawNumber(getCcZ(padIdx), colour2, 0, 0);
+            //addPressurePoint(colourX, x, y, z * scale);
             outputCC (z, getCcZ(padIdx), 7.0, 193.0, false);
         }
         // Bottom row
         else
         {
-                drawNumber(int(pressureBarZ), ccTextColour, 0, 0);
-                addPressurePoint(colourX, x, y, z * scale);
+            // Pressure bar X slider
+            if(xLedPos < 7)
+            {
+                drawNumber(int(pressureBarZ), colour2, 0, 0);
                 outputCC (z, pressureBarZ, 7.0, 193.0, true);     
+            }
+            // Pressure bar Z pressure
+            else
+            {
+                
+
+                drawNumber(int(pressureBarX), colour2, 0, 0);
+                outputCC (z, pressureBarX, 7.0, 193.0, true);     
+            }
+            
         }
 
     }
