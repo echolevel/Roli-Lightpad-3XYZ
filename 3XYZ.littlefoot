@@ -11,29 +11,12 @@
     </modes>
 
     <groups>
-        <group name="Global" displayName="Global" />
-        <group name="PadAX" displayName="Pad A axis X" />
-        <group name="PadAY" displayName="Pad A axis Y" />
-        <group name="PadAZ" displayName="Pad A axis Z" />
-        <group name="PadBX" displayName="Pad B axis X" />
-        <group name="PadBY" displayName="Pad B axis Y" />
-        <group name="PadBZ" displayName="Pad B axis Z" />
-        <group name="PressureBar" displayName="Pressure Bar" />
-        <group name="XAssign" displayName="X Assign" />
-        <group name="YAssign" displayName="Y Assign" />
-        <group name="ZAssign" displayName="Z Assign" />
-        <group name="X2Assign" displayName="X2 Assign" />
-        <group name="Y2Assign" displayName="Y2 Assign" />
-        <group name="Z2Assign" displayName="Z2 Assign" />
+        <group name="Global" displayName="Global" />        
+        <group name="PressureBar" displayName="Pressure Bar" />        
         <group name="XYPads" displayName="XY Pads" />
     </groups>
 
-    <variables>
-        
-
-        
-
-        <variable name="channel" group="Global" displayName="MIDI channel" type="int" value="1" min="0" max="16" displayMode="menu" tooltip="Which MIDI channel to transmit on" />
+    <variables>        
         /// Main XYZ point colour
         <variable name="colour" group="Global" displayName="Touch Color" type="colour" value="0x4AC8CA"  tooltip="Color of the touch heat map" />                
         /// Secondary XYZ point colour
@@ -42,60 +25,28 @@
         <variable name="colour3" group="Global" displayName="Tertiary Color" type="colour" value="0xEB1ECD"  tooltip="Color of the secondary touch" />
         <variable name="backgroundColour" group="Global" displayName="Background Color" type="colour" value="0x551963" tooltip="Color of the pad fill" />
         <variable name="ccTextColour" group="Global" displayName="CC Text Colour" type="colour" value="0xFFFF00"  tooltip="Color of the text displaying the CC being assigned" />
+        <variable name="colourX" group="Global" displayName="Mapping Touch Color" type="colour" value="0xEC4646"  tooltip="Color of the touch heat map when assigning X" />        
+        <variable name="channel" group="Global" displayName="MIDI channel" type="int" value="1" min="0" max="16" displayMode="menu" tooltip="Which MIDI channel to transmit on" />
         <variable name="toggleSens" group="Global" displayName="Mapping Mode Sensitivity" type="int" min="1" max="90" value="10" displayMode="stepper" tooltip="The velocity required to toggle assignment mode by striking the top-left corner of the Lightpad" />
         
         <vector count="2" wantsGetFunctions="true" wantsSetFunctions="true">
             <variable name="ccX" group="XYPads" displayName="X CC" type="int" min="0" max="127" value="111" displayMode="stepper" tooltip="The MIDI CC that is sent for this pad's X axis"/>
             <variable name="modeX" group="XYPads" displayName="X mode" type="option" options="Normal;Inverted;Bipolar" value="Bipolar" tooltip="Whether this axis should be normal, bipolar or inverted" />
             <variable name="releaseX" group="XYPads" displayName="X release" type="option" options="Hold;Spring" value="Spring" tooltip="Whether releasing this axis should result in a default 'reset' value being sent" />
-            <variable name="lerpX" group="XYPads" displayName="X return time" type="int" min="0" max="10000" value="120" tooltip="Time in milliseconds for this axis to return to default in Spring release mode. Default is 0 for Normal, 64 for Bipolar and 127 for Inverted" />
+            <variable name="lerpX" group="XYPads" displayName="X return time" type="float" min="0.0" max="1.0" value="0.5" tooltip="Speed at which this axis will return to default in Spring release mode. Default is 0 for Normal, 64 for Bipolar and 127 for Inverted" />
 
             <variable name="ccY" group="XYPads" displayName="Y CC" type="int" min="0" max="127" value="112" displayMode="stepper" tooltip="The MIDI CC that is sent for this pad's Y axis"/>
             <variable name="modeY" group="XYPads" displayName="Y mode" type="option" options="Normal;Inverted;Bipolar" value="Normal" tooltip="Whether this axis should be normal, bipolar or inverted" />
             <variable name="releaseY" group="XYPads" displayName="Y release" type="option" options="Hold;Spring" value="Hold" tooltip="Whether releasing this axis should result in a default 'reset' value being sent" />
-            <variable name="lerpY" group="XYPads" displayName="Y return time" type="int" min="0" max="10000" value="120" tooltip="Time in milliseconds for this axis to return to default in Spring release mode. Default is 0 for Normal, 64 for Bipolar and 127 for Inverted" />
+            <variable name="lerpY" group="XYPads" displayName="Y return time" type="float" min="0.0" max="1.0" value="0.5" tooltip="Speed at which this axis will return to default in Spring release mode. Default is 0 for Normal, 64 for Bipolar and 127 for Inverted" />
 
             <variable name="ccZ" group="XYPads" displayName="Z CC" type="int" min="0" max="127" value="113" displayMode="stepper" tooltip="The MIDI CC that is sent for Pad A's Z axis"/>
             <variable name="modeZ" group="XYPads" displayName="Z mode" type="option" options="Normal;Inverted;Binary" value="Normal" tooltip="Whether this axis should be normal, inverted or binary" />
 
         </vector>
 
-        <variable name="padAccX" group="PadAX" displayName="Pad A: cc X" type="int" min="0" max="127" value="111" displayMode="stepper" tooltip="The MIDI CC that is sent for Pad A's X axis"/>
-        <variable name="PadAmodeX" group="PadAX" displayName="Pad A: X mode" type="option" options="Normal;Inverted;Bipolar" value="Bipolar" tooltip="Whether this axis should be normal, bipolar or inverted" />
-        <variable name="PadAreleaseX" group="PadAX" displayName="Pad A: X release" type="option" options="Hold;Spring" value="Spring" tooltip="Whether releasing this axis should result in a default 'reset' value being sent" />
-        <variable name="PadAlerpX" group="PadAX" displayName="Pad A: X return time" type="int" min="0" max="10000" value="120" tooltip="Time in milliseconds for this axis to return to default in Spring release mode. Default is 0 for Normal, 64 for Bipolar and 127 for Inverted" />
-
-        <variable name="padAccY" group="PadAY" displayName="Pad A: cc Y" type="int" min="0" max="127" value="112" displayMode="stepper" tooltip="The MIDI CC that is sent for Pad A's Y axis"/>
-        <variable name="PadAmodeY" group="PadAY" displayName="Pad A: Y mode" type="option" options="Normal;Inverted;Bipolar" value="Normal" tooltip="Whether this axis should be normal, bipolar or inverted" />
-        <variable name="PadAreleaseY" group="PadAY" displayName="Pad A: Y release" type="option" options="Hold;Spring" value="Hold" tooltip="Whether releasing this axis should result in a default 'reset' value being sent" />
-        <variable name="PadAlerpY" group="PadAY" displayName="Pad A: Y return time" type="int" min="0" max="10000" value="120" tooltip="Time in milliseconds for this axis to return to default in Spring release mode. Default is 0 for Normal, 64 for Bipolar and 127 for Inverted" />
-
-        <variable name="padAccZ" group="PadAZ" displayName="Pad A: cc Z" type="int" min="0" max="127" value="113" displayMode="stepper" tooltip="The MIDI CC that is sent for Pad A's Z axis"/>
-        <variable name="PadAmodeZ" group="PadAZ" displayName="Pad A: Z mode" type="option" options="Normal;Inverted" value="Normal" tooltip="Whether this axis should be normal or inverted" />
-
-
-
-
-        <variable name="padBccX" group="PadBX" displayName="Pad B: cc X" type="int" min="0" max="127" value="114" displayMode="stepper" tooltip="The MIDI CC that is sent for Pad A's X axis"/>
-        <variable name="PadBmodeX" group="PadBX" displayName="Pad B: X mode" type="option" options="Normal;Inverted;Bipolar" value="Bipolar" tooltip="Whether this axis should be normal, bipolar or inverted" />
-        <variable name="PadBreleaseX" group="PadBX" displayName="Pad B: X release" type="option" options="Hold;Spring" value="Spring" tooltip="Whether releasing this axis should result in a default 'reset' value being sent" />
-        <variable name="PadBlerpX" group="PadBX" displayName="Pad B: X return time" type="int" min="0" max="10000" value="120" tooltip="Time in milliseconds for this axis to return to default in Spring release mode. Default is 0 for Normal, 64 for Bipolar and 127 for Inverted" />
-
-        <variable name="padBccY" group="PadBY" displayName="Pad B: cc Y" type="int" min="0" max="127" value="115" displayMode="stepper" tooltip="The MIDI CC that is sent for Pad A's Y axis"/>
-        <variable name="PadBmodeY" group="PadBY" displayName="Pad B: Y mode" type="option" options="Normal;Inverted;Bipolar" value="Normal" tooltip="Whether this axis should be normal, bipolar or inverted" />
-        <variable name="PadBreleaseY" group="PadBY" displayName="Pad B: Y release" type="option" options="Hold;Spring" value="Hold" tooltip="Whether releasing this axis should result in a default 'reset' value being sent" />
-        <variable name="PadBlerpY" group="PadBY" displayName="Pad B: Y return time" type="int" min="0" max="10000" value="120" tooltip="Time in milliseconds for this axis to return to default in Spring release mode. Default is 0 for Normal, 64 for Bipolar and 127 for Inverted" />
-
-        <variable name="padBccZ" group="PadBZ" displayName="Pad B: cc Z" type="int" min="0" max="127" value="116" displayMode="stepper" tooltip="The MIDI CC that is sent for Pad A's Z axis"/>
-        <variable name="PadBmodeZ" group="PadBZ" displayName="Pad B: Z mode" type="option" options="Normal;Inverted" value="Normal" tooltip="Whether this axis should be normal or inverted" />
-
-
         <variable name="pressureBarZ" group="PressureBar" displayName="Pressure CC" type="int" min="0" max="127" value="117" displayMode="stepper" tooltip="The MIDI CC that is sent for the pressure bar's Z axis"/>        
         <variable name="pressureBarmodeZ" group="PressureBar" displayName="Pressure Bar: Z mode" type="option" options="Normal;Inverted;Binary" value="Normal" tooltip="Whether this axis should be normal, inverted or binary" />
-
-        /// Assignment colours/bgcolours
-        <variable name="colourX" group="XAssign" displayName="X Touch Color" type="colour" value="0xEC4646"  tooltip="Color of the touch heat map when assigning X" visible="false" />        
-
 
         <vector count="3" wantsGetFunctions="true" wantsSetFunctions="true">
             <variable name="zoneX1" type="int" value="0" visible="false" />
@@ -109,12 +60,6 @@
 
 TO DO:
         
-    Interpolated spring returns probably require a rewrite of all the mode code in the touch event; it'll probably
-    all need to be done in the redraw loop with some checks to see if work is necessary - the touch event will just
-    update/override the current MIDI value and flip a flag or reset a timer.
-
-    Need to reintroduce binary mode for the pressure bar, at least.
-
 Notes:
     Metadata types: https://forum.juce.com/t/global-array-support-for-littlefoot/32394/5
 
@@ -129,6 +74,8 @@ int entryZones[5][4]; // Stores a zone for touch indices 1 to 5, -1 for unassign
 float zonePressure[4];
 int zoneXMidiValue[4]; // 0-127. We store these in case we need to lerp after release
 int zoneYMidiValue[4]; // 0-127. We store these in case we need to lerp after release
+int zoneXSpringTarget[4]; // X Lerp target for spring release
+int zoneYSpringTarget[4]; // Y Lerp target for spring release
 bool touchDown[5]; // Stores a 'down' state for touch indices 1 to 5
 
 void initialise()
@@ -232,6 +179,8 @@ void handleButtonUp(int index)
 
 void repaint()
 {    
+    clearDisplay(backgroundColour);
+
     int DeltaTime = getMillisecondCounter() - lastMillisCount;
     lastMillisCount = getMillisecondCounter();
 
@@ -241,11 +190,31 @@ void repaint()
         {
             fadeCounters[f] -= DeltaTime;
             fadeCounters[f] = max(fadeCounters[f], 0);
+        }        
+    }
+
+    // Check if there are spring releases to lerp
+    for(int i = 0; i < 2; i++)
+    {
+        if(entryZones[i] < 0)
+        {
+            
+            if(zoneXMidiValue[i] != zoneXSpringTarget[i])
+            {                
+                zoneXMidiValue[i] = int(lerp(float(zoneXMidiValue[i]), float(zoneXSpringTarget[i]), getLerpX(i)));
+                sendCC((channel-1), getCcX(i), zoneXMidiValue[i]);
+            }
+
+            if(zoneYMidiValue[i] != zoneYSpringTarget[i])
+            {
+                zoneYMidiValue[i] = int(lerp(float(zoneYMidiValue[i]), float(zoneYSpringTarget[i]), getLerpY(i)));
+                sendCC((channel-1), getCcY(i), zoneYMidiValue[i]);
+            }
         }
     }
 
 
-    clearDisplay(backgroundColour);
+    
     if(modeButtonDown)
     {
         // TOP ROW
@@ -366,310 +335,159 @@ void handleTouch (int index, float x, float y, float z, float scale, bool IsTouc
             zoneXMidiValue[entryZones[index]] = int(map(x, xMin, xMax, 0.0, 127.0));
             zoneYMidiValue[entryZones[index]] = 127 - int(map(y, yMin, yMax, 0.0, 127.0));            
 
-            bool CueRelease = false;
-            if(IsTouchEnd)
-            {
-                CueRelease = true;
-                
-            }
-
+            bool IsReleased = IsTouchEnd;            
 
             int padIdx = entryZones[index];
 
-            // X
-            if(CueRelease)
-            {                                   
-                if(getReleaseX(padIdx) == 0) // Hold
-                {
-                    sendCC((channel-1), getCcX(padIdx), zoneXMidiValue[entryZones[index]]);                        
-                }
-                else if(getReleaseX(padIdx) == 1) // Spring
-                {
-                    if(getModeX(padIdx) == 0) sendCC((channel-1), getCcX(padIdx), 0); // Normal
-                    if(getModeX(padIdx) == 1) sendCC((channel-1), getCcX(padIdx), 127); // Inverted
-                    if(getModeX(padIdx) == 2) sendCC((channel-1), getCcX(padIdx), 63); // Bipolar
-                }
-            }
-            else
-            {
-                if(getModeX(padIdx) == 0) sendCC((channel-1), getCcX(padIdx), zoneXMidiValue[entryZones[index]]); // Normal
-                if(getModeX(padIdx) == 1) sendCC((channel-1), getCcX(padIdx), 127 - zoneXMidiValue[entryZones[index]]); // Inverted
-                if(getModeX(padIdx) == 2) sendCC((channel-1), getCcX(padIdx), 64 + (zoneXMidiValue[entryZones[index]] - 64)); // Bipolar
-            }
-            
-            // Y
-            
-            if(CueRelease)
-            {                                   
-                if(getReleaseY(padIdx) == 0) // Hold
-                {
-                    sendCC((channel-1), getCcY(padIdx), zoneYMidiValue[entryZones[index]]);                        
-                }
-                else if(getReleaseY(padIdx) == 1) // Spring
-                {
-                    if(getModeY(padIdx) == 0) sendCC((channel-1), getCcY(padIdx), 0); // Normal
-                    if(getModeY(padIdx) == 1) sendCC((channel-1), getCcY(padIdx), 127); // Inverted
-                    if(getModeY(padIdx) == 2) sendCC((channel-1), getCcY(padIdx), 63); // Bipolar
-                }
-            }
-            else
-            {
-                if(getModeY(padIdx) == 0) sendCC((channel-1), getCcY(padIdx), zoneYMidiValue[entryZones[index]]); // Normal
-                if(getModeY(padIdx) == 1) sendCC((channel-1), getCcY(padIdx), 127 - zoneYMidiValue[entryZones[index]]); // Inverted
-                if(getModeY(padIdx) == 2) sendCC((channel-1), getCcY(padIdx), 64 + (zoneYMidiValue[entryZones[index]] - 64)); // Bipolar
-            }
-
-
-            // Z    
-            if(getModeZ(padIdx) == 0)
-            {
-                sendCC((channel-1), getCcZ(padIdx), int(z * 127.0)); // Normal
-            }
-            else if(getModeZ(padIdx) == 1)
-            {
-                sendCC((channel-1), getCcZ(padIdx), 127 - int(z * 127.0)); // Inverted
-            }
-            
-            addPressurePoint (colour, x, y, z * scale);  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            /*
-            // PAD A
-            if(entryZones[index] == 0)
-            {
-
-                // X
-                if(CueRelease)
-                {                                   
-                    if(PadAreleaseX == 0) // Hold
-                    {
-                        sendCC((channel-1), padAccX, zoneXMidiValue[entryZones[index]]);                        
-                    }
-                    else if(PadAreleaseX == 1) // Spring
-                    {
-                        if(PadAmodeX == 0) sendCC((channel-1), padAccX, 0); // Normal
-                        if(PadAmodeX == 1) sendCC((channel-1), padAccX, 127); // Inverted
-                        if(PadAmodeX == 2) sendCC((channel-1), padAccX, 63); // Bipolar
-                    }
-                }
-                else
-                {
-                    if(PadAmodeX == 0) sendCC((channel-1), padAccX, zoneXMidiValue[entryZones[index]]); // Normal
-                    if(PadAmodeX == 1) sendCC((channel-1), padAccX, 127 - zoneXMidiValue[entryZones[index]]); // Inverted
-                    if(PadAmodeX == 2) sendCC((channel-1), padAccX, 64 + (zoneXMidiValue[entryZones[index]] - 64)); // Bipolar
-                }
-                
-                // Y
-                
-                if(CueRelease)
-                {
-                    
-                    if(PadAreleaseY == 0) // Hold
-                    {
-                        sendCC((channel-1), padAccY, zoneYMidiValue[entryZones[index]]);
-                    }
-                    else if(PadAreleaseY == 1) // Spring
-                    {
-                        if(PadAmodeY == 0) sendCC((channel-1), padAccY, 0); // Normal
-                        if(PadAmodeY == 1) sendCC((channel-1), padAccY, 127); // Inverted
-                        if(PadAmodeY == 2) sendCC((channel-1), padAccY, 63); // Bipolar
-                    }
-                }
-                else
-                {
-                    if(PadAmodeY == 0) sendCC((channel-1), padAccY, zoneYMidiValue[entryZones[index]]); // Normal
-                    if(PadAmodeY == 1) sendCC((channel-1), padAccY, 127 - zoneYMidiValue[entryZones[index]]); // Inverted
-                    if(PadAmodeY == 2) sendCC((channel-1), padAccY, 64 + (zoneYMidiValue[entryZones[index]] - 64)); // Bipolar
-                }
-
-
-                // Z    
-                if(PadAmodeZ == 0)
-                {
-                    sendCC((channel-1), padAccZ, int(z * 127.0)); // Normal
-                }
-                else if(PadAmodeZ == 1)
-                {
-                    sendCC((channel-1), padAccZ, 127 - int(z * 127.0)); // Inverted
-                }
-                
-                addPressurePoint (colour, x, y, z * scale);        
-            }
-
-            // PAD B
-            if(entryZones[index] == 1)
-            {
-                 // X
-                if(CueRelease)
-                {                                   
-                    if(PadBreleaseX == 0) // Hold
-                    {
-                        sendCC((channel-1), padBccX, zoneXMidiValue[entryZones[index]]);                        
-                    }
-                    else if(PadBreleaseX == 1) // Spring
-                    {
-                        if(PadBmodeX == 0) sendCC((channel-1), padBccX, 0); // Normal
-                        if(PadBmodeX == 1) sendCC((channel-1), padBccX, 127); // Inverted
-                        if(PadBmodeX == 2) sendCC((channel-1), padBccX, 63); // Bipolar
-                    }
-                }
-                else
-                {
-                    if(PadBmodeX == 0) sendCC((channel-1), padBccX, zoneXMidiValue[entryZones[index]]); // Normal
-                    if(PadBmodeX == 1) sendCC((channel-1), padBccX, 127 - zoneXMidiValue[entryZones[index]]); // Inverted
-                    if(PadBmodeX == 2) sendCC((channel-1), padBccX, 64 + (zoneXMidiValue[entryZones[index]] - 64)); // Bipolar
-                }
-                
-                // Y
-                
-                if(CueRelease)
-                {
-                    
-                    if(PadBreleaseY == 0) // Hold
-                    {
-                        sendCC((channel-1), padBccY, zoneYMidiValue[entryZones[index]]);
-                    }
-                    else if(PadBreleaseY == 1) // Spring
-                    {
-                        if(PadBmodeY == 0) sendCC((channel-1), padBccY, 0); // Normal
-                        if(PadBmodeY == 1) sendCC((channel-1), padBccY, 127); // Inverted
-                        if(PadBmodeY == 2) sendCC((channel-1), padBccY, 63); // Bipolar
-                    }
-                }
-                else
-                {
-                    if(PadBmodeY == 0) sendCC((channel-1), padBccY, zoneYMidiValue[entryZones[index]]); // Normal
-                    if(PadBmodeY == 1) sendCC((channel-1), padBccY, 127 - zoneYMidiValue[entryZones[index]]); // Inverted
-                    if(PadBmodeY == 2) sendCC((channel-1), padBccY, 64 + (zoneYMidiValue[entryZones[index]] - 64)); // Bipolar
-                }
-
-
-                // Z    
-                if(PadBmodeZ == 0)
-                {
-                    sendCC((channel-1), padBccZ, int(z * 127.0)); // Normal
-                }
-                else if(PadBmodeZ == 1)
-                {
-                    sendCC((channel-1), padBccZ, 127 - int(z * 127.0)); // Inverted
-                }
-                
-                addPressurePoint (colour, x, y, z * scale);        
-            }
-
-            // PRESSURE BAR
+            // Pressure bar
             if(entryZones[index] == 2)
             {
-                if(pressureBarmodeZ == 0) // Normal
-                {
-                    sendCC((channel-1), pressureBarZ, int(z * 127.0));
-                }
-                else if(pressureBarmodeZ == 1) // Inverted
-                {
-                    sendCC((channel-1), pressureBarZ, 127 - int(z * 127.0));
-                }                  
-                else if(pressureBarmodeZ == 2) // Binary
+
+                addPressurePoint (colour2, x, y, z * scale);  
+                if(pressureBarmodeZ == 0) sendCC((channel-1), pressureBarZ, int(z * 127.0)); // Normal
+                if(pressureBarmodeZ == 1) sendCC((channel-1), pressureBarZ, int(z * 127.0)); // Inverted
+                if(pressureBarmodeZ == 2) 
                 {
                     if(z > 0.1)
                     {
-                        sendCC((channel-1), pressureBarZ, 127);
+                        sendCC((channel-1), pressureBarZ, 127); // Binary   
                     }
                     else
                     {
-                        sendCC((channel-1), pressureBarZ, 0);
+                        sendCC((channel-1), pressureBarZ, 0); // Binary   
                     }
-                }           
+                    
+                }
+
+            }
+            // XYZ Pads
+            else 
+            {
+                // X
+                if(IsReleased)
+                {                                   
+                    if(getReleaseX(padIdx) == 0) // Hold
+                    {
+                        zoneXSpringTarget[padIdx] = zoneXMidiValue[entryZones[index]]; // Set these the same so no work is done in redraw
+                        sendCC((channel-1), getCcX(padIdx), zoneXMidiValue[entryZones[index]]);                        
+                    }
+                    else if(getReleaseX(padIdx) == 1) // Spring
+                    {
+                        if(getLerpX(padIdx) > 0)
+                        {
+                            if(getModeX(padIdx) == 0) zoneXSpringTarget[padIdx] = 0; // Normal
+                            if(getModeX(padIdx) == 1) zoneXSpringTarget[padIdx] = 127; // Inverted
+                            if(getModeX(padIdx) == 2) zoneXSpringTarget[padIdx] = 63; // Bipolar
+                        }
+                        else
+                        {
+                            if(getModeX(padIdx) == 0) sendCC((channel-1), getCcX(padIdx), 0); // Normal
+                            if(getModeX(padIdx) == 1) sendCC((channel-1), getCcX(padIdx), 127); // Inverted
+                            if(getModeX(padIdx) == 2) sendCC((channel-1), getCcX(padIdx), 63); // Bipolar
+                        }
+                        
+                    }
+                }
+                else
+                {
+                    zoneXSpringTarget[padIdx] = zoneXMidiValue[entryZones[index]]; // Set these the same so no work is done in redraw
+                    if(getModeX(padIdx) == 0) sendCC((channel-1), getCcX(padIdx), zoneXMidiValue[entryZones[index]]); // Normal
+                    if(getModeX(padIdx) == 1) sendCC((channel-1), getCcX(padIdx), 127 - zoneXMidiValue[entryZones[index]]); // Inverted
+                    if(getModeX(padIdx) == 2) sendCC((channel-1), getCcX(padIdx), 64 + (zoneXMidiValue[entryZones[index]] - 64)); // Bipolar
+                }
                 
-                addPressurePoint (colour2, x, y, z * scale);        
-            }     
-            */   
+                // Y
+                
+                if(IsReleased)
+                {                                   
+                    if(getReleaseY(padIdx) == 0) // Hold
+                    {
+                        zoneYSpringTarget[padIdx] = zoneYMidiValue[entryZones[index]]; // Set these the same so no work is done in redraw
+                        sendCC((channel-1), getCcY(padIdx), zoneYMidiValue[entryZones[index]]);                        
+                    }
+                    else if(getReleaseY(padIdx) == 1) // Spring
+                    {
+                        if(getLerpY(padIdx) > 0)
+                        {
+                            if(getModeY(padIdx) == 0) zoneYSpringTarget[padIdx] = 0; // Normal
+                            if(getModeY(padIdx) == 1) zoneYSpringTarget[padIdx] = 127; // Inverted
+                            if(getModeY(padIdx) == 2) zoneYSpringTarget[padIdx] = 63; // Bipolar
+                        }
+                        else
+                        {
+                            if(getModeY(padIdx) == 0) sendCC((channel-1), getCcY(padIdx), 0); // Normal
+                            if(getModeY(padIdx) == 1) sendCC((channel-1), getCcY(padIdx), 127); // Inverted
+                            if(getModeY(padIdx) == 2) sendCC((channel-1), getCcY(padIdx), 63); // Bipolar
+                        }
+                        
+                    }
+                }
+                else
+                {
+                    zoneYSpringTarget[padIdx] = zoneYMidiValue[entryZones[index]]; // Set these the same so no work is done in redraw
+                    if(getModeY(padIdx) == 0) sendCC((channel-1), getCcY(padIdx), zoneYMidiValue[entryZones[index]]); // Normal
+                    if(getModeY(padIdx) == 1) sendCC((channel-1), getCcY(padIdx), 127 - zoneYMidiValue[entryZones[index]]); // Inverted
+                    if(getModeY(padIdx) == 2) sendCC((channel-1), getCcY(padIdx), 64 + (zoneYMidiValue[entryZones[index]] - 64)); // Bipolar
+                }
+
+
+                // Z    
+                if(getModeZ(padIdx) == 0)
+                {
+                    sendCC((channel-1), getCcZ(padIdx), int(z * 127.0)); // Normal
+                }
+                else if(getModeZ(padIdx) == 1)
+                {
+                    sendCC((channel-1), getCcZ(padIdx), 127 - int(z * 127.0)); // Inverted
+                }
+                
+                addPressurePoint (colour, x, y, z * scale);  
+            }
+
+           
+
     }
     // Mapping Mode
     else
     {
+        // We send Z pressure on all of these to ensure a constant datastream while mapping 
+
         // Top row
         if( yLedPos < 4) 
         {
-            if(xLedPos < 7)
-            {
-                
-                drawNumber(int(padAccX), ccTextColour, 0, 0);
-                addPressurePoint(colourX, x, y, z * scale);
-                outputCC (x, padAccX, 7.0, 193.0, false);
-            }            
-            else
-            {
-                drawNumber(int(padBccX), ccTextColour, 0, 0);
-                addPressurePoint(colourX, x, y, z * scale);
-                outputCC (z, padBccX, 0.0, 100.0, false);
-            }        
+            int padIdx = 0;
+            if(xLedPos >= 7) padIdx = 1;
+
+            drawNumber(getCcX(padIdx), ccTextColour, 0, 0);
+            addPressurePoint(colourX, x, y, z * scale);
+            outputCC (z, getCcX(padIdx), 7.0, 193.0, false);            
         }
         // Middle row
         else if( yLedPos < 8)
         {
-            if(xLedPos < 7)
-            {
-                
-                drawNumber(int(padAccY), ccTextColour, 0, 0);
-                addPressurePoint(colourX, x, y, z * scale);
-                outputCC (x, padAccY, 7.0, 193.0, false);
-            }            
-            else
-            {
-                drawNumber(int(padBccY), ccTextColour, 0, 0);
-                addPressurePoint(colourX, x, y, z * scale);
-                outputCC (z, padBccY, 0.0, 100.0, false);
-            }        
+            int padIdx = 0;
+            if(xLedPos >= 7) padIdx = 1;
+
+            drawNumber(getCcY(padIdx), ccTextColour, 0, 0);
+            addPressurePoint(colourX, x, y, z * scale);
+            outputCC (z, getCcY(padIdx), 7.0, 193.0, false);            
         }
         // third row
         else if( yLedPos < 12)
         {
-            if(xLedPos < 7)
-            {
-                
-                drawNumber(int(padAccZ), ccTextColour, 0, 0);
-                addPressurePoint(colourX, x, y, z * scale);
-                outputCC (x, padAccZ, 7.0, 193.0, false);
-            }            
-            else
-            {
-                drawNumber(int(padBccZ), ccTextColour, 0, 0);
-                addPressurePoint(colourX, x, y, z * scale);
-                outputCC (z, padBccZ, 0.0, 100.0, false);
-            }        
+            int padIdx = 0;
+            if(xLedPos >= 7) padIdx = 1;
+
+            drawNumber(getCcZ(padIdx), ccTextColour, 0, 0);
+            addPressurePoint(colourX, x, y, z * scale);
+            outputCC (z, getCcZ(padIdx), 7.0, 193.0, false);
         }
         // Bottom row
         else
         {
                 drawNumber(int(pressureBarZ), ccTextColour, 0, 0);
                 addPressurePoint(colourX, x, y, z * scale);
-                outputCC (y, pressureBarZ, 7.0, 193.0, true);     
+                outputCC (z, pressureBarZ, 7.0, 193.0, true);     
         }
 
     }
