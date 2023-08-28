@@ -7,7 +7,7 @@ With this Littlefoot app for the Roli Lightpad you can assign MIDI CC numbers to
 
 Each area is highly configurable, with 'spring' return vs hold upon touch release; adjustable lerp speed for spring release; and normal, inverted, bipolar or binary MIDI output modes.
 
-<img src="lightpad1.jpg" width="250"> <img src="lightpad2.jpg" width="250">
+<img src="lightpad1.jpg" width="375"> <img src="lightpad2.jpg" width="375">
 
 My favourite thing (the reason I wrote this) is a Mapping Mode page, accessed by striking the top-left corner above a configurable pressure threshold: here you can touch an area of a grid which represents each zone's axes and emit a datastream on _only_ that CC, making it possible to easily map that CC to a function in your DAW. By default, the factory XYZ app that comes with the Lightpad requires you to switch back and forth between your DAW and Roli's Dashboard app to isolate each CC for mapping, which is a huge pain and a massive roadbump in one's workflow.
 
