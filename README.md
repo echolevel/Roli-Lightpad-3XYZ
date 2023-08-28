@@ -23,5 +23,6 @@ If you find it's too hard - or too easy - to enter Mapping Mode, you can adjust 
 
 Thoughts/To-do:
 
+* My spring lerps aren't quite getting there, if they're returning a bipolar value to 64 from a lower value, and sometimes they can stick on and endlessly transmit CC messages. Need to fix that.
 * This is a cool device - especially the M, and especially if you can get one cheap. If you don't need wireless, see if you can find one with a dead battery and just use it with USB. I really got this _just_ as an X/Y pad controller because it's surprisingly hard to find a good one that isn't either part of a huge workstation keyboard that you don't otherwise want, or that isn't part of a crappy cheap USB controller that you don't otherwise want, or that isn't just part of a cool bit of kit that sadly doesn't send MIDI (Korg Mini-KP and Mini Kaoss Pad 2S). So all functionality beyond X/Y is a bonus - even the z-axis - and I won't feel like I'm failing to make the most of all the possibilities.
 * I'll put a quick video together when I get a chance.

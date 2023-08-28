@@ -205,35 +205,6 @@ void repaint()
     }
 
 
-    // Check if there are spring releases to lerp
-    for(int i = 0; i < 2; i++)
-    {
-        if(entryZones[i] < 0)
-        {
-            
-            if(zoneXMidiValue[i] != zoneXSpringTarget[i])
-            {                
-                zoneXMidiValue[i] = int(lerp(float(zoneXMidiValue[i]), float(zoneXSpringTarget[i]), getLerpX(i)));
-                sendCC((channel-1), getCcX(i), zoneXMidiValue[i]);
-            }
-
-            if(zoneYMidiValue[i] != zoneYSpringTarget[i])
-            {
-                zoneYMidiValue[i] = int(lerp(float(zoneYMidiValue[i]), float(zoneYSpringTarget[i]), getLerpY(i)));
-                sendCC((channel-1), getCcY(i), zoneYMidiValue[i]);
-            }
-        }
-    }
-    // Special case: check the pressure bar's X slider
-    if(entryZones[2] < 0)
-    {
-        if(zoneXMidiValue[2] != zoneXSpringTarget[2])
-        {
-            zoneXMidiValue[2] = int(lerp(float(zoneXMidiValue[2]), float(zoneXSpringTarget[2]), pressureBarLerpX));
-            sendCC((channel-1), pressureBarX, zoneXMidiValue[2]);
-        }
-    }
-    
     if(modeButtonDown)
     {
         // TOP ROW
@@ -258,6 +229,37 @@ void repaint()
     }
     else
     {
+        // Check if there are spring releases to lerp
+        for(int i = 0; i < 2; i++)
+        {
+            if(entryZones[i] < 0)
+            {
+                
+                if(zoneXMidiValue[i] != zoneXSpringTarget[i])
+                {                
+                    zoneXMidiValue[i] = int(lerp(float(zoneXMidiValue[i]), float(zoneXSpringTarget[i]), getLerpX(i)));
+                    sendCC((channel-1), getCcX(i), zoneXMidiValue[i]);
+                }
+
+                if(zoneYMidiValue[i] != zoneYSpringTarget[i])
+                {
+                    zoneYMidiValue[i] = int(lerp(float(zoneYMidiValue[i]), float(zoneYSpringTarget[i]), getLerpY(i)));
+                    sendCC((channel-1), getCcY(i), zoneYMidiValue[i]);
+                }
+            }
+        }
+        // Special case: check the pressure bar's X slider
+        if(entryZones[2] < 0)
+        {
+            if(zoneXMidiValue[2] != zoneXSpringTarget[2])
+            {
+                zoneXMidiValue[2] = int(lerp(float(zoneXMidiValue[2]), float(zoneXSpringTarget[2]), pressureBarLerpX));
+                sendCC((channel-1), pressureBarX, zoneXMidiValue[2]);
+            }
+        }
+
+        // Update visuals
+
         // https://stackoverflow.com/questions/1787124/programmatically-darken-a-hex-colour
         int bgDarker = (backgroundColour & 0x4e4e4e) >> 1;
         int col2Darker = (colour2 & 0x4e4e4e) >> 1;
